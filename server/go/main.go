@@ -1,6 +1,8 @@
 package main
 
 import (
+	"book/htmxSwap"
+	"book/login-signup"
 	"log"
 	"net/http"
 	"os"
@@ -26,11 +28,21 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{"message": "Hello there"})
 	})
-	r.POST("/log-in", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "hola",
-		})
+
+	r.GET("/log-in", func(c *gin.Context) {
+		htmxswap.LoginButton(c)
 	})
 
+	r.GET("/sign-up", func(c *gin.Context) {
+		htmxswap.SignUpBtn(c)
+	})
+
+	r.GET("/about", func(ctx *gin.Context) {
+		htmxswap.AboutPage(ctx)
+	})
+
+	r.POST("/user-log-in", func(ctx *gin.Context) {
+		loginsignup.UserLogIn(ctx)
+	})
 	r.Run("localhost:6969")
 }

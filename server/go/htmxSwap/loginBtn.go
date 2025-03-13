@@ -7,7 +7,11 @@ import (
 func LoginButton(c *gin.Context) {
 	c.Header("Content-Type", "text/html")
 	c.String(200, `
-<form class="user-signin">
+<form class="user-signin" 
+        hx-post="/user-login" 
+        hx-target="#login-warning"
+        hx-swap="innerHTML"
+        hx-on::afterquest=" if (event.detail.xhr.status >= 400) { document.getElementById('login-warning').innerHTML = event.detail.xhr.responseText }"> 
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -18,10 +22,18 @@ func LoginButton(c *gin.Context) {
           <div class="modal-body">
                     <h3>Log-In</h3>
                 <label for="userid">Username:</label><br>
-                <input type="text" id="userid" required placeholder="User name"><br>
+                <input type="text" id="userid"
+                        name="userid" required placeholder="User name"><br>
                 <label for="user-password">Password:</label><br>
-                <input type="password" id="user-password" placeholder="Enter your password" required><br>
+                <input type="password" id="user-password"
+                        name="password" placeholder="Enter your password" required>
+                <img src="https://media.geeksforgeeks.org/wp-content/uploads/20210917145551/eye.png" 
+                        width="5%" height="5%" style="display:inlinel margin-left: -1.5%; vertical-align: middle"
+                        id="login-password">
+                <br>
           </div>
+            <div id="login-warning">
+            </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button
@@ -36,8 +48,6 @@ func LoginButton(c *gin.Context) {
             </button>
             <button type="submit" 
                 id="submit-login" 
-                hx-post="/user-log-in"
-                hx-taget="header"
                 class="btn btn-primary"
                 >Log-in
             </button>

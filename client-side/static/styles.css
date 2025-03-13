@@ -1,5 +1,11 @@
-body.light-theme {
-    background-color: #d9d4d4;
+.light-theme {
+    background-color: #eceaea;
+    color: #000000;
+}
+
+.dark-theme {
+    background-color: #313131;
+    color: #fdf0f0;
 }
 
 header {
@@ -21,4 +27,15 @@ header {
 
 #log-in {
     font-size: 15px;
+}
+
+.light-mode {
+    border: none;
+    padding: 0;
+    background: none;
+}
+
+.navbar {
+    border: none;
+    background: none;
 }

@@ -1,12 +1,9 @@
 package loginsignup
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"net/http"
-
+	"database/sql"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type Login struct {
@@ -14,39 +11,19 @@ type Login struct {
 	Password string `json:"password"`
 }
 
-func UserLogIn(c *gin.Context) {
+func UserLogIn(c *gin.Context, db *sql.DB) {
 	var user Login
+	user.UserName = c.PostForm("userid")
+	user.Password = c.PostForm("password")
 
-	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"Error: ": err.Error()})
-	}
-
-	key := make([]byte, 32)
-	_, err := rand.Read(key)
+	hashPass, err := HashPass(user.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"Error: ": err.Error()})
 	}
 
-	blockCipher, err := aes.NewCipher(key)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
-	}
-
-	gcm, err := cipher.NewGCM(blockCipher)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
-	}
-
-	nonce := make([]byte, gcm.NonceSize())
-	if _, err = rand.Read(nonce); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
-	}
-
-	cipherTxt := gcm.Seal(nonce, nonce, []byte(user.Password), nil)
-	user.Password = string(cipherTxt)
 	c.JSON(200, gin.H{
 		"message":  "data received",
 		"username": user.UserName,
-		"pass":     user.Password,
+		"pass":     hashPass,
 	})
 }

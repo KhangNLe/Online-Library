@@ -3,6 +3,7 @@ package main
 import (
 	"book/htmxSwap"
 	"book/login-signup"
+	"book/search"
 	"log"
 	"net/http"
 	"os"
@@ -25,12 +26,29 @@ func main() {
 
 	r.LoadHTMLFiles(htmlFile)
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", func(c *gin.Context) { //TODO adding stuffs to the home page
 		c.HTML(http.StatusOK, "index.html", gin.H{"message": "Hello there"})
 	})
 
 	r.GET("/log-in", func(c *gin.Context) {
 		htmxswap.LoginButton(c)
+	})
+
+	r.GET("/search", func(c *gin.Context) {
+		search.SearchPage(c)
+	})
+
+	r.POST("/book-search", func(c *gin.Context) {
+		title := c.PostForm("query")
+		search.DisplaySearch(title, c)
+	})
+
+	r.GET("/my-books", func(ctx *gin.Context) {
+
+	})
+
+	r.GET("/recommend", func(ctx *gin.Context) {
+
 	})
 
 	r.GET("/sign-up", func(c *gin.Context) {
@@ -41,8 +59,13 @@ func main() {
 		htmxswap.AboutPage(ctx)
 	})
 
-	r.POST("/user-log-in", func(ctx *gin.Context) {
-		loginsignup.UserLogIn(ctx)
+	r.POST("/register", func(c *gin.Context) {
+		loginsignup.RegisterUser(c)
 	})
+
+	r.POST("/user-login", func(c *gin.Context) {
+		loginsignup.UserLogIn(c)
+	})
+
 	r.Run("localhost:6969")
 }

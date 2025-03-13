@@ -11,8 +11,13 @@ func LoginButton(c *gin.Context) {
         hx-post="/user-login" 
         hx-target="#login-warning"
         hx-swap="innerHTML"
-        hx-on::afterquest=" if (event.detail.xhr.status >= 400) { document.getElementById('login-warning').innerHTML = event.detail.xhr.responseText }"> 
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
+        hx-on::after-request=" if (event.detail.xhr.status >= 400) { document.getElementById('login-warning').innerHTML = event.detail.xhr.responseText; }"> 
+<div class="modal fade" id="staticBackdrop"
+        data-bs-backdrop="static" 
+        data-bs-keyboard="true" 
+        tabindex="-1" 
+        aria-labelledby="staticBackdropLabel" 
+        aria-hidden="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -31,9 +36,9 @@ func LoginButton(c *gin.Context) {
                         width="5%" height="5%" style="display:inlinel margin-left: -1.5%; vertical-align: middle"
                         id="login-password">
                 <br>
-          </div>
             <div id="login-warning">
             </div>
+          </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button

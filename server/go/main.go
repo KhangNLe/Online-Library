@@ -4,12 +4,13 @@ import (
 	"book/htmxSwap"
 	"book/login-signup"
 	"book/search"
+	"database/sql"
+	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -21,6 +22,13 @@ func main() {
 
 	frontFile := filepath.Join(home, "Desktop/Projects/HTML/OnlineLibrary/client-side/")
 	htmlFile := filepath.Join(frontFile, "index.html")
+	dbFile := filepath.Join(home, "Desktop/Projects/HTML/OnlineLibrary/server/library.db")
+
+	db, err := sql.Open("sqlite3", dbFile)
+	if err != nil {
+		log.Fatalf("Could not connect to the database. Error: %s", err)
+	}
+	defer db.Close()
 
 	r.Static("/static", filepath.Join(frontFile, "static"))
 
@@ -60,11 +68,11 @@ func main() {
 	})
 
 	r.POST("/register", func(c *gin.Context) {
-		loginsignup.RegisterUser(c)
+		loginsignup.RegisterUser(c, db)
 	})
 
 	r.POST("/user-login", func(c *gin.Context) {
-		loginsignup.UserLogIn(c)
+		loginsignup.UserLogIn(c, db)
 	})
 
 	r.Run("localhost:6969")

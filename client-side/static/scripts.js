@@ -22,6 +22,8 @@ document.addEventListener('htmx:afterSwap', function(e) {
         const errorMsg = document.getElementById("mismatch-pass");
         const passregex = document.getElementById("password-regex");
         const reenterRegex = document.getElementById("reenter-regex");
+        const userName = document.getElementById("signup-userid");
+        const userRegx = document.getElementById("userid-regex");
 
         passToggle.addEventListener("click", (e) => {
             e.preventDefault();
@@ -32,13 +34,16 @@ document.addEventListener('htmx:afterSwap', function(e) {
             passwordVisibility(reenter, reenterToggle);
         })
 
+        userName.addEventListener("keyup", () => {
+            regexChecking(userName, userRegx, 6);
+        })
 
         password.addEventListener("keyup", () => {
-            regexChecking(password, passregex);
+            regexChecking(password, passregex, 10);
         });
 
         reenter.addEventListener("keyup", () => {
-            regexChecking(reenter, reenterRegex);
+            regexChecking(reenter, reenterRegex, 10);
 
             if (password.value != reenter.value) {
                 errorMsg.style.display = "block";
@@ -69,8 +74,8 @@ function passwordVisibility(text_box, visible_img) {
  * @param {Element} text_box
  * @param {Element} warning 
  **/
-function regexChecking(text_box, warning) {
-    let regx = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^/]).{10,}$/;
+function regexChecking(text_box, warning, length) {
+    let regx = createRegex(length);
 
     if (text_box.value == "") {
         warning.style.display = "none";
@@ -79,4 +84,12 @@ function regexChecking(text_box, warning) {
     } else {
         warning.style.display = "none";
     }
+}
+
+/**
+ * @param {int} length
+ * @returns RegExp
+ **/
+function createRegex(length) {
+    return new RegExp(`^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^/_]).{${length},}$`);
 }

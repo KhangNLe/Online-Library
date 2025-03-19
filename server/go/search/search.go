@@ -3,6 +3,7 @@ package search
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,21 +18,21 @@ type Booksearch struct {
 }
 
 type Results struct {
-	Author_key   []string `json:"author_key"`
-	Author_name  []string `json:"author_name"`
-	CoverPic     int      `json:"cover_i"`
-	Publish_year int      `json:"first_publish_year"`
-	BookKey      string   `json:"key"`
-	Title        string   `json:"title"`
+	Author_key  []string `json:"author_key"`
+	Author_name []string `json:"author_name"`
+	CoverPic    int      `json:"cover_i"`
+	BookKey     string   `json:"key"`
+	Title       string   `json:"title"`
 }
 
 func SearchBook(text string) []Results {
 	url := "https://openlibrary.org/search.json?q="
 	text = strings.ReplaceAll(text, " ", "+")
+	fields := "&fields=author_key,author_name,cover_i,title,key"
 
 	var search Booksearch
 
-	resp, err := http.Get(url + text)
+	resp, err := http.Get(url + text + fields)
 	if err != nil {
 		log.Printf("Could not fetch the %s url, erro: %s", (url + text), err)
 	}
@@ -43,34 +44,69 @@ func SearchBook(text string) []Results {
 		log.Printf("Could not decode the api, err: %s", err)
 	}
 
-	return search.Result[:15]
+	return search.Result
 }
 
-func DisplaySearch(text string, c *gin.Context) {
+func DisplaySearch(c *gin.Context) {
+	text := c.PostForm("query")
 	bookResult := SearchBook(text)
 
-	var bookDisplay []string
+	if len(bookResult) == 0 {
+		c.Header("Context-Type", "text/html")
+		c.String(200, fmt.Sprintf(`
+                <p style="font-size:24px;">We could not find any book with the search "%s". Please try another input
+                </p>
+                `, text))
+		return
+	}
 
-	for index, book := range bookResult {
-		if index%4 == 0 && index != 0 {
+	var bookDisplay []string
+	count := 0
+	for _, book := range bookResult {
+		if count == 25 {
+			break
+		}
+		if count%4 == 0 {
 			bookDisplay = append(bookDisplay,
 				fmt.Sprint(`
                     <div class="clear"></div>
                     `),
 			)
 		}
+		if len(book.Author_name) == 0 {
+			continue
+		}
+		var bookPic string
+		if book.CoverPic == 0 {
+			bookPic = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
+		} else {
+			bookPic = html.EscapeString("https://covers.openlibrary.org/b/id/" + strconv.Itoa(book.CoverPic) + "-M.jpg")
+		}
+
+		count++
 		bookDisplay = append(bookDisplay,
 			fmt.Sprintf(`
-                <div>
+                <div class="books">
                 <img src="%s">
-                </div>
-                <div class="book-title">
-                    <button hx-post="/books" hx-swap="innerHTML"
-                            hx-trigger="click" hx-target=".contents" value=%s>
-                    %s</button>
-                </div>
-                `,
-				("https://covers.openlibrary.org/b/id/"+strconv.Itoa(book.CoverPic)+"-M.jpg"),
+                    <a hx-post="/book" hx-swap="innerHTML"
+                        hx-trigger="click"
+                        hx-target=".contents" 
+                        hx-vals='{
+                            "work":     "%s",
+                            "author":   "%s",
+                            "author_key":   "%s",
+                            "cover":    "%s"}'
+                        href="#"
+                        hx-replace-url="/book%s"
+                        hx-push-url="true"
+                    >
+                    %s</a>
+                </div>`,
+				bookPic,
+				html.EscapeString(book.BookKey),
+				book.Author_name[0],
+				book.Author_key[0],
+				bookPic,
 				book.BookKey,
 				book.Title,
 			),

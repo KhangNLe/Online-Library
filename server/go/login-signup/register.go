@@ -1,13 +1,13 @@
 package loginsignup
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
-func RegisterUser(c *gin.Context, db *sql.DB) {
+func RegisterUser(c *gin.Context, db *sqlx.DB) {
 	var userSignup Login
 	userSignup.UserName = c.PostForm("userid")
 	userSignup.Password = c.PostForm("password")

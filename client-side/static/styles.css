@@ -39,3 +39,49 @@ header {
     border: none;
     background: none;
 }
+
+.books img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.books:hover {
+    background-color: #e1dbdb;
+}
+
+.books {
+    float: left;
+    width: 173px;
+    margin: 0px 3px 6px 3px;
+    background-color: #F9F7F0;
+    color: #181818;
+    text-align: center;
+    height: 200px;
+}
+
+.books a {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.search-display {
+    margin: auto;
+    padding: 10px 10px;
+    max-width: 75vw;
+}
+
+.search-display .books {
+    width: 180px;
+    padding-bottom: 8px;
+    height: 350px;
+}
+
+.clear {
+    clear: none;
+}
+
+.bookpage_container {
+    float: flex;
+    flex-direction: column;
+}

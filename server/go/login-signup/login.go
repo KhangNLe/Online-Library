@@ -1,10 +1,10 @@
 package loginsignup
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
 type Login struct {
@@ -12,7 +12,7 @@ type Login struct {
 	Password string `json:"password"`
 }
 
-func UserLogIn(c *gin.Context, db *sql.DB) {
+func UserLogIn(c *gin.Context, db *sqlx.DB) {
 	var user Login
 	user.UserName = c.PostForm("userid")
 	user.Password = c.PostForm("password")
@@ -68,6 +68,6 @@ func UserLogIn(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	c.Header("HX-Redirect", "/")
+	c.Header("HX-Redirect", "/user")
 	c.Status(http.StatusOK)
 }

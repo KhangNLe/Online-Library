@@ -29,10 +29,8 @@ type BookDescription struct {
 
 func (bd *BookDescription) UnmarshalJSON(b []byte) error {
 	var str string
-	log.Println("Unmasrshall is called")
 	if err := json.Unmarshal(b, &str); err == nil {
 		*bd = BookDescription{Value: str}
-		log.Println("Error:", err)
 		return nil
 	}
 
@@ -44,8 +42,6 @@ func (bd *BookDescription) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &obj); err != nil {
 		return err
 	}
-	log.Println("Type", obj.Type)
-	log.Println("Value", obj.Value)
 	*bd = BookDescription{
 		Type:  obj.Type,
 		Value: obj.Value,
@@ -71,7 +67,6 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 
 	book := make(map[string]string)
 	if err := c.Bind(&book); err != nil {
-		log.Println("Error:", err)
 		c.Header("Content-Type", "text/html")
 		c.Status(http.StatusInternalServerError)
 		return
@@ -80,7 +75,6 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 	if !ok {
 		c.Header("Content-Type", "text/html")
 		c.Status(http.StatusInternalServerError)
-		log.Println("No work mapping")
 		return
 	}
 
@@ -98,7 +92,6 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 	if err != nil {
 		c.Header("Content-Type", "text/html")
 		c.Status(http.StatusInternalServerError)
-		log.Printf("Error at DB query select, err: %s", err)
 		return
 	}
 	defer reps.Close()
@@ -116,13 +109,11 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 		if err != nil {
 			c.Header("Content-Type", "text/html")
 			c.Status(http.StatusInternalServerError)
-			log.Printf("DB scan failed, err: %s", err)
 			return
 		}
 		genres, err := getBookGenre(db, book_id)
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
-			log.Printf("Cound not get book genre, err= %s", err)
 			return
 		}
 		book.Cover = cover_img
@@ -140,7 +131,6 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 		if err != nil {
 			c.Header("Content-Type", "text/html")
 			c.Status(http.StatusInternalServerError)
-			log.Printf("Error at API, err: %s", err)
 			return
 		}
 
@@ -149,12 +139,10 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 		descriptions := strings.Split(bookDetail.Description.Value, "----------")
 		noSource := strings.Split(descriptions[0], "([source]")
 		bookDetail.Description.Value = noSource[0]
-		log.Printf("book detail: %s", bookDetail.Description.Value)
 		err = addBookToDB(db, bookDetail)
 		if err != nil {
 			c.Header("Content-Type", "text/html")
 			c.Status(http.StatusInternalServerError)
-			log.Printf("Error at adding book to db, err: %s", err)
 			return
 		}
 		PrintBookDetail(bookDetail, c)

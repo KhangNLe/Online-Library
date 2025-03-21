@@ -53,6 +53,18 @@ document.addEventListener('htmx:afterSwap', function(e) {
         });
     }
 
+    const searchBtn = document.getElementById("searchBtn")
+    if (searchBtn != null) {
+        searchBtn.addEventListener("click", () => {
+            const display = document.querySelector(".search-display")
+            display.innerHTML = `
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            `
+        })
+    }
+
 });
 
 /**

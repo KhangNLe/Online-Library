@@ -1,6 +1,7 @@
 package main
 
 import (
+	"book/homepage"
 	"book/htmxSwap"
 	"book/login-signup"
 	"book/search"
@@ -56,7 +57,7 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	r.LoadHTMLGlob(htmlFile)
 
 	r.GET("/", func(c *gin.Context) { //TODO adding stuffs to the home page
-		c.HTML(http.StatusOK, "index.html", gin.H{"message": "Hello there"})
+		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
 	r.GET("/log-in", htmxswap.LoginButton)
@@ -72,6 +73,7 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	})
 
 	r.POST("/book-search", search.DisplaySearch)
+	r.GET("/book-search", search.DisplaySearch)
 
 	r.GET("/my-books", func(ctx *gin.Context) {
 
@@ -81,9 +83,7 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		search.BookDetail(c, db)
 	})
 
-	r.GET("/recommend", func(ctx *gin.Context) {
-
-	})
+	r.GET("/recommend", homepage.Homepage)
 
 	r.GET("/sign-up", func(c *gin.Context) {
 		htmxswap.SignUpBtn(c)

@@ -17,7 +17,7 @@
 <body class="light-theme">
     <header class="web-title">
         <div class="header-page">
-            <h1 Hx-get="/" hx-target="body" hx-swap="innerHTML" hx-trigger="click">My Library</h1>
+            <h1 hx-get="/" hx-target="body" hx-swap="innerHTML" hx-trigger="click">My Library</h1>
             <div>
                 <button type="button" class="btn btn-dark" hx-get="/log-in" hx-target="#login-container"
                     hx-swap="innerHTML" hx-trigger="click" id="log-in">
@@ -71,7 +71,7 @@
                                 document.querySelector('.navbar-brand').innerText = 'My Books';
                                 }">
                             My Books</button>
-                        <button class="nav-link btn btn-link" hx-push-url="true" id="recommend" hx-get="/book-recommend"
+                        <button class="nav-link btn btn-link" hx-push-url="true" id="recommend" hx-get="/recommend"
                             hx-target=".contents" hx-trigger="click" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
                                 document.getElementById('navbarNavAltMarkup').classList.remove('show');
                                 document.querySelector('.navbar-brand').innerText = 'Reccommend';

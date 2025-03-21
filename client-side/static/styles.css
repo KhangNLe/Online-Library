@@ -52,7 +52,7 @@ header {
 
 .books {
     float: left;
-    width: 173px;
+    width: 30%;
     margin: 0px 3px 6px 3px;
     background-color: #F9F7F0;
     color: #181818;
@@ -84,4 +84,21 @@ header {
 .bookpage_container {
     float: flex;
     flex-direction: column;
+}
+
+.display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pageBtns {
+    margin: 20px;
+
+}
+
+.pageBtns button {
+    width: 85px;
+    height: 40px;
 }

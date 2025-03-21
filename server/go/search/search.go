@@ -63,7 +63,7 @@ func DisplaySearch(c *gin.Context) {
 	start := 21 * (pageNum - 1)
 	end := 21 * pageNum
 	var text string
-	if pageNum == 1 {
+	if _, ok := page["text"]; !ok {
 		text = c.PostForm("query")
 	} else {
 		text, _ = page["text"]
@@ -163,6 +163,19 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
                 >%d</button>
                 `, i, text, i, i))
 		}
+		*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+                <button type="button" 
+                class="pageBtn btn btn-primary"
+                hx-get="/book-search"
+                hx-target=".display"
+                hx-swap="innerHTML"
+                hx-vals='{"page": "%d",
+                            "text": "%s"
+                        }'
+                hx-swap-url="/book-search/page/%d"
+                hx-push-url="true"
+                >%d</button>
+                `, 4, text, 4, 4))
 		*bookDisplay = append(*bookDisplay, `
             <button type="click" class="pageBtn btn btn-primary">...</button>
             `)

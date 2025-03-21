@@ -60,6 +60,7 @@ func DisplaySearch(c *gin.Context) {
 	}
 	currPage, _ := page["page"]
 	pageNum, _ := strconv.Atoi(currPage)
+	log.Println("pageNum", pageNum)
 	start := 21 * (pageNum - 1)
 	end := 21 * pageNum
 	var text string
@@ -71,6 +72,7 @@ func DisplaySearch(c *gin.Context) {
 	books := SearchBook(text)
 
 	totalBook := len(books)
+	log.Println(totalBook)
 	totalPage := 0
 	if totalBook%21 == 0 {
 		totalPage = totalBook / 21
@@ -147,7 +149,7 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
         <div class="btn-toolbar" role="toolbar">
         <div class="btn-group me-2" role="group">
         `)
-	if pageNum < 4 {
+	if pageNum < 3 {
 		for i := 1; i < 4; i++ {
 			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
                 <button type="button" 
@@ -163,19 +165,6 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
                 >%d</button>
                 `, i, text, i, i))
 		}
-		*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
-                <button type="button" 
-                class="pageBtn btn btn-primary"
-                hx-get="/book-search"
-                hx-target=".display"
-                hx-swap="innerHTML"
-                hx-vals='{"page": "%d",
-                            "text": "%s"
-                        }'
-                hx-swap-url="/book-search/page/%d"
-                hx-push-url="true"
-                >%d</button>
-                `, 4, text, 4, 4))
 		*bookDisplay = append(*bookDisplay, `
             <button type="click" class="pageBtn btn btn-primary">...</button>
             `)
@@ -192,7 +181,7 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
             hx-push-url="true"
             >%d</button>
             `, totalPage, text, totalPage, totalPage))
-	} else if pageNum+3 >= totalPage {
+	} else if pageNum+1 >= totalPage {
 		*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
             <button type="button" 
             class="pageBtn btn btn-primary"

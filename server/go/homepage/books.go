@@ -2,6 +2,7 @@ package homepage
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -50,6 +51,7 @@ func TopFiction() ([]Book, error) {
 			idx--
 			continue
 		}
+		log.Println(book)
 		popularBook = append(popularBook, book)
 
 	}
@@ -61,9 +63,10 @@ func getBook(info BookGuten) (Book, error) {
 	url := "https://openlibrary.org/search.json?q="
 	features := "&fields=author_key,cover_i,title,key"
 	info.Title = strings.ReplaceAll(info.Title, " ", "+")
+	limit := "&limit=1"
 
 	var book Book
-	resp, err := http.Get(url + info.Title + features)
+	resp, err := http.Get(url + info.Title + features + limit)
 	if err != nil {
 		return Book{}, err
 	}

@@ -65,6 +65,18 @@ document.addEventListener('htmx:afterSwap', function(e) {
         })
     }
 
+    const pageBtns = document.querySelectorAll(".pageBtn");
+    if (pageBtns != null) {
+        pageBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                })
+            });
+        });
+    }
+
 });
 
 /**

@@ -13,6 +13,7 @@ func SearchPage(c *gin.Context) {
                         hx-swap="innerHTML"
                         hx-target=".display"
                         hx-vals='{"page" : "1"}'
+                        hx-push-url="true"
                         hx-on::after-request=" if (event.detail.xhr.status >= 400) { document.querySelector('.search-display').innerHTML = event.detail.xhr.responseText; }" 
                         >
             <input class="form-control me-2" size="75%" name="query" type="search" autocomplete="off" placeholder="Enter title or author" aria-label="Search">

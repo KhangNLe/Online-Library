@@ -98,7 +98,9 @@ header {
 .pageBtns button {
     width: 85px;
     height: 40px;
-}.light-theme {
+}
+
+.light-theme {
     background-color: #eceaea;
     color: #000000;
 }
@@ -161,10 +163,6 @@ header {
     border: 10px;
 }
 
-.books a {
-    margin: 8px 0;
-    font-size: 16px;
-}
 
 .search-display {
     margin: auto;
@@ -178,10 +176,6 @@ header {
     height: 350px;
 }
 
-.bookpage_container {
-    float: flex;
-    flex-direction: column;
-}
 
 .display {
     display: flex;
@@ -192,10 +186,80 @@ header {
 
 .pageBtns {
     margin: 20px;
+}
 
+.books a {
+    text-decoration: none;
+    color: black;
+}
+
+.bookpageContainer {
+    display: flex !important;
+    width: 100%;
+}
+
+.bookpageLeft {
+    position: sticky;
+    width: 300px;
+    top: 0;
+    left: 0;
+    padding: 20px;
+}
+
+.bookpageRight {
+    margin-left: 150px;
+    width: calc(100% - 320px);
+    padding: 20px;
+}
+
+.bookImg img {
+    width: 110%;
+    height: auto;
+}
+
+.bookAction {
+    margin-top: 15px;
+}
+
+.btn-group {
+    width: 100%;
+}
+
+.bookTitle,
+.bookDescription,
+.bookGenre {
+    margin-bottom: 20px;
 }
 
 .pageBtns button {
     width: 85px;
     height: 40px;
+}
+
+.bookDescription p {
+    font-size: 15px;
+}
+
+.bookTitle h3 {
+    font-size: 38px;
+    font-weight: bold;
+}
+
+.bookTitle p {
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.bookpageRight .genre {
+    font-size: 14px;
+    padding: 4px;
+}
+
+.bookGenre {
+    display: flex;
+    max-width: 700px;
+}
+
+.bookGenre .genre:hover {
+    background-color: #e1dbdb;
 }

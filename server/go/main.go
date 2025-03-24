@@ -38,7 +38,7 @@ func main() {
 	defer db.Close()
 
 	r := setupRouter(frontFile, htmlFile, db)
-
+	gin.SetMode(gin.DebugMode)
 	r.Run("localhost:6969")
 }
 
@@ -68,7 +68,7 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		if htmxRequest {
 			search.SearchPage(c)
 		} else {
-			c.HTML(http.StatusOK, "search.html", gin.H{"message": "Search"})
+			c.HTML(http.StatusOK, "search.html", nil)
 		}
 	})
 

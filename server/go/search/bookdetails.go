@@ -58,7 +58,6 @@ type Book struct {
 	Publish_year string          `json:"first_publish_date"`
 	Key          string
 	Cover        string
-	Genre        []string
 	Author       string
 }
 
@@ -121,7 +120,7 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 		book.Description.Value = description
 		book.First_sen.Value = first_sen
 		book.Publish_year = year_publish
-		book.Genre = genres
+		book.Subjects = genres
 		book.Author = author
 
 		PrintBookDetail(book, c)
@@ -212,16 +211,42 @@ func getBookGenre(db *sqlx.DB, book_id string) ([]string, error) {
 	return genres, nil
 }
 
-func PrintBookDetail(bookDetail Book, c *gin.Context) {
+func presentingGenre(book Book) []string {
+	var genres []string
 
+	for idx, genre := range book.Subjects {
+		if idx == 20 {
+			break
+		}
+		genres = append(genres, fmt.Sprintf(`
+            <a href="#"
+                style="text-decoration: none; color: black;"
+                hx-post="/book-search"
+                hx-target=".contents"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                hx-vals='{
+                    "text":     "%s",
+                    "page":     "1",
+                    "subject":  "yes"
+                        }'
+                ><span class="genre"><span>%s</span></span></a>
+        `, html.EscapeString(genre), genre))
+	}
+
+	return genres
+}
+
+func PrintBookDetail(bookDetail Book, c *gin.Context) {
+	var details []string
 	c.Header("Content-Type", "text/html")
-	c.String(200, fmt.Sprintf(`
-        <div class="bookPage_container">
-            <div class="bookpage_left">
-                <div clas="book_img">
+	details = append(details, fmt.Sprintf(`
+        <div class="bookpageContainer">
+            <div class="bookpageLeft">
+                <div class="bookImg">
                     <img src="%s">
                 </div>
-                <div class="book_action">
+                <div class="bookAction">
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-success">Want to Read</button>
                         <div class="dropdown">
@@ -237,25 +262,31 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                     </div>
                 </div>
             </div>
-            <div class="bookpage_right">
-                <div class="book_title">
+            <div class="bookpageRight">
+                <div class="bookTitle">
                     <h3>%s</h3>
-                    <p style="font-size: 15px;">Author: %s</p>
+                    <p>Author: %s</p>
                 </div>
-                <div class="book_description">
-                    <p style="font-size: 13px;">%s</p>
+                <div class="bookDescription">
+                    <p>%s</p>
                 </div>
-                <div class="book_genre">
-                    <ul class="genre_list">
-                        <span class="genre"><span style="font-size:12px;">Genres</span></span>
-                    </ul>
-                </div>
-            </div>
-        </div>
+                <div class="bookGenre">
+                    <spane>Genres:</span>
+                    <ul class="genreList">
         `, bookDetail.Cover,
 		bookDetail.Title,
 		bookDetail.Author,
 		html.EscapeString(bookDetail.Description.Value),
 	))
 
+	genres := presentingGenre(bookDetail)
+	genreList := strings.Join(genres, "\n")
+	details = append(details, genreList)
+	details = append(details, `
+                    </ul>
+                </div>
+            </div>
+        </div>
+        `)
+	c.String(200, strings.Join(details, ""))
 }

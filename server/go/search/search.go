@@ -41,15 +41,10 @@ func DisplaySearch(c *gin.Context) {
 		text = result
 	}
 
-	var subject bool
 	var totalBook int
-	if _, ok := page["subject"]; !ok {
-		subject = ok
-		totalBook = len(SearchBook(text))
-	} else {
-		subject = ok
-		totalBook = len(SearchSubject(text))
-	}
+
+	books := SearchBook(text)
+	totalBook = len(books)
 
 	log.Println(totalBook)
 	totalPage := 0
@@ -71,13 +66,17 @@ func DisplaySearch(c *gin.Context) {
 	var bookDisplay []string
 	bookDisplay = append(bookDisplay, `<div class="search-display">`)
 
-	if subject {
-		appendSubjectDisplay(start, end, totalBook, &bookDisplay)
-	} else {
-		appendBooks(start, end, totalBook, &bookDisplay)
+	_, ok := page["subject"]
+	if ok {
+		appendSubject(&bookDisplay)
 	}
 
+	appendBooks(start, end, totalBook, &bookDisplay)
+
 	addingPageBtn(&bookDisplay, pageNum, totalPage, text)
+	if ok {
+		bookDisplay = append(bookDisplay, "</div>")
+	}
 
 	c.Header("Content-Type", "text/html")
 	c.String(200, strings.Join(bookDisplay, "\n"))

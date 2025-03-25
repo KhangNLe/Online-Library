@@ -221,7 +221,7 @@ func presentingGenre(book Book) []string {
 		genres = append(genres, fmt.Sprintf(`
             <a href="#"
                 style="text-decoration: none; color: black;"
-                hx-post="/book-search"
+                hx-get="/book-search"
                 hx-target=".contents"
                 hx-swap="innerHTML"
                 hx-push-url="true"

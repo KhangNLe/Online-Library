@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -29,7 +30,7 @@ var subjectBooks []SubjectResult
 
 func SearchSubject(text string) []SubjectResult {
 	url := "https://openlibrary.org/subjects/"
-	field := ".json?limit=250"
+	field := ".json?&limit=100"
 
 	return getSearchSubject(url + text + field)
 }
@@ -38,19 +39,28 @@ func getSearchSubject(searchStr string) []SubjectResult {
 
 	var search Works
 
-	resp, err := http.Get(searchStr)
+	respone, err := http.Get(searchStr)
 	if err != nil {
 		log.Printf("Could not fetch the %s url, erro: %s", (searchStr), err)
 	}
 
-	defer resp.Body.Close()
+	defer respone.Body.Close()
 
-	err = json.NewDecoder(resp.Body).Decode(&search)
+	body, err := io.ReadAll(respone.Body)
 	if err != nil {
-		log.Printf("Could not decode the api, err: %s", err)
+		log.Printf("Could not read respone, Error: %s", err)
+		return nil
+	}
+	log.Printf("Raw respone: %s", string(body))
+
+	err = json.Unmarshal(body, &search)
+	if err != nil {
+		log.Printf("Unable to unmarshal api, Error: %s", err)
+		return nil
 	}
 
 	subjectBooks = search.Results
+	log.Println(search.Results)
 
 	return search.Results
 }

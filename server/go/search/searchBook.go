@@ -97,7 +97,6 @@ func appendBooks(start, end, totalBook int, bookDisplay *[]string) {
 			),
 		)
 	}
-	*bookDisplay = append(*bookDisplay, "</div>")
 }
 
 func appendSubject(bookDisplay *[]string) {

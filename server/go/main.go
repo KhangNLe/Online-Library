@@ -5,13 +5,14 @@ import (
 	"book/htmxSwap"
 	"book/login-signup"
 	"book/search"
-	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const (
@@ -20,6 +21,8 @@ const (
 	serverPath  = "server"
 	dbName      = "library.db"
 )
+
+var key string
 
 func main() {
 	home, err := os.UserHomeDir()
@@ -64,7 +67,6 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 
 	r.GET("/search", func(c *gin.Context) {
 		htmxRequest := c.GetHeader("HX-Request") == "true"
-
 		if htmxRequest {
 			search.SearchPage(c)
 		} else {
@@ -81,6 +83,19 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 
 	r.POST("/book", func(c *gin.Context) {
 		search.BookDetail(c, db)
+	})
+
+	r.GET("/book/works/:bookKey", func(c *gin.Context) {
+		bookKey := c.Param("bookKey")
+		if bookKey != "123" {
+			key = bookKey
+		}
+
+		if c.GetHeader("HX-Request") == "true" {
+			search.LoadingBookDetail(c, key, db)
+		} else {
+			c.HTML(http.StatusOK, "reload.html", nil)
+		}
 	})
 
 	r.GET("/recommend", homepage.Homepage)

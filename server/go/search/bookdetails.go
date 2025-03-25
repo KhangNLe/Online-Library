@@ -241,7 +241,10 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
 	var details []string
 	c.Header("Content-Type", "text/html")
 	details = append(details, fmt.Sprintf(`
-        <div class="bookpageContainer">
+        <div class="bookpageContainer"
+            hx-get="/book%s"
+            hx-trigger="load"
+            hx-target=".bookpageContainer">
             <div class="bookpageLeft">
                 <div class="bookImg">
                     <img src="%s">
@@ -273,7 +276,8 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                 <div class="bookGenre">
                     <spane>Genres:</span>
                     <ul class="genreList">
-        `, bookDetail.Cover,
+        `, bookDetail.Key,
+		bookDetail.Cover,
 		bookDetail.Title,
 		bookDetail.Author,
 		html.EscapeString(bookDetail.Description.Value),

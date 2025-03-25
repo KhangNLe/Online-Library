@@ -64,12 +64,12 @@ func DisplaySearch(c *gin.Context) {
 	}
 
 	var bookDisplay []string
-	bookDisplay = append(bookDisplay, `<div class="search-display">`)
 
 	_, ok := page["subject"]
 	if ok {
 		appendSubject(&bookDisplay)
 	}
+	bookDisplay = append(bookDisplay, `<div class="search-display">`)
 
 	appendBooks(start, end, totalBook, &bookDisplay)
 

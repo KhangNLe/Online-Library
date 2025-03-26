@@ -1,7 +1,7 @@
 package main
 
 import (
-	"book/homepage"
+	"book/author"
 	"book/htmxSwap"
 	"book/login-signup"
 	"book/search"
@@ -85,20 +85,27 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		search.BookDetail(c, db)
 	})
 
-	r.GET("/book/works/:bookKey", func(c *gin.Context) {
-		bookKey := c.Param("bookKey")
-		if bookKey != "123" {
-			key = bookKey
-		}
+	/*
+		r.GET("/book/works/:bookKey", func(c *gin.Context) {
+			bookKey := c.Param("bookKey")
+			if bookKey != "123" {
+				key = bookKey
+			}
 
-		if c.GetHeader("HX-Request") == "true" {
-			search.LoadingBookDetail(c, key, db)
-		} else {
-			c.HTML(http.StatusOK, "reload.html", nil)
-		}
+			if c.GetHeader("HX-Request") == "true" {
+				search.LoadingBookDetail(c, key, db)
+			} else {
+				c.HTML(http.StatusOK, "reload.html", nil)
+			}
+		}) */
+
+	r.POST("/author", func(c *gin.Context) {
+		author.GetAuthor(c, db)
 	})
 
-	r.GET("/recommend", homepage.Homepage)
+	r.GET("/recommend", func(c *gin.Context) {
+
+	})
 
 	r.GET("/sign-up", func(c *gin.Context) {
 		htmxswap.SignUpBtn(c)

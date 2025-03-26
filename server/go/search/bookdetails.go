@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"log"
 	"net/http"
 	"strings"
 
@@ -59,6 +60,7 @@ type Book struct {
 	Key          string
 	Cover        string
 	Author       string
+	AuthorKey    string
 }
 
 func BookDetail(c *gin.Context, db *sqlx.DB) {
@@ -79,6 +81,11 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 	author, ok := book["author"]
 	if !ok {
 		author = "Unknown author"
+	}
+
+	authorKey, ok := book["author_key"]
+	if !ok {
+		authorKey = ""
 	}
 
 	book_cover, ok := book["cover"]
@@ -122,6 +129,7 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 		book.Publish_year = year_publish
 		book.Subjects = genres
 		book.Author = author
+		book.AuthorKey = authorKey
 
 		PrintBookDetail(book, c)
 	} else {
@@ -134,6 +142,7 @@ func BookDetail(c *gin.Context, db *sqlx.DB) {
 
 		bookDetail.Cover = book_cover
 		bookDetail.Author = author
+		bookDetail.AuthorKey = authorKey
 		descriptions := strings.Split(bookDetail.Description.Value, "----------")
 		noSource := strings.Split(descriptions[0], "([source]")
 		bookDetail.Description.Value = noSource[0]
@@ -241,10 +250,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
 	var details []string
 	c.Header("Content-Type", "text/html")
 	details = append(details, fmt.Sprintf(`
-        <div class="bookpageContainer"
-            hx-get="/book%s"
-            hx-trigger="load"
-            hx-target=".bookpageContainer">
+        <div class="bookpageContainer">
             <div class="bookpageLeft">
                 <div class="bookImg">
                     <img src="%s">
@@ -268,7 +274,19 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
             <div class="bookpageRight">
                 <div class="bookTitle">
                     <h3>%s</h3>
-                    <p>Author: %s</p>
+                    <p>Author: <a
+                        id="author"
+                        href="#"
+                        hx-post="/author"
+                        hx-target=".bookpageContainer"
+                        hx-swap="innerHTML"
+                        hx-push-url="/author/%s"
+                        hx-cals='{
+                            "key": "%s",
+                            "bookKey" : "%s"
+                                }'
+                        >
+                        %s</a></p>
                 </div>
                 <div class="bookDescription">
                     <p>%s</p>
@@ -276,9 +294,11 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                 <div class="bookGenre">
                     <spane>Genres:</span>
                     <ul class="genreList">
-        `, bookDetail.Key,
-		bookDetail.Cover,
+        `, bookDetail.Cover,
 		bookDetail.Title,
+		bookDetail.AuthorKey,
+		bookDetail.AuthorKey,
+		bookDetail.Key,
 		bookDetail.Author,
 		html.EscapeString(bookDetail.Description.Value),
 	))

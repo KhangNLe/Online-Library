@@ -188,7 +188,7 @@ header {
     margin: 20px;
 }
 
-.books a {
+a {
     text-decoration: none;
     color: black;
 }
@@ -261,5 +261,10 @@ header {
 }
 
 .bookGenre .genre:hover {
+    background-color: #e1dbdb;
+}
+
+
+a:hover {
     background-color: #e1dbdb;
 }

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
-	"log"
 	"net/http"
 	"strings"
 
@@ -257,12 +256,11 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                 </div>
                 <div class="bookAction">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-success">Want to Read</button>
                         <div class="dropdown">
                             <button class="btn btn-success dropdown-toggle"
                                     type="button" data-bs-toggle="dropdown"
                                     aria-expanded="false"
-                            ></button>
+                            >Want to Read</button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Add to Library</a></li>
                                 <li><a class="dropdown-item" href="#">Reading</a></li>

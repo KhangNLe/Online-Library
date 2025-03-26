@@ -1,6 +1,7 @@
 package author
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -42,5 +43,27 @@ func GetAuthor(c *gin.Context, db *sqlx.DB) {
 }
 
 func printAuthor(c *gin.Context, author Author) {
+	c.Header("Content-Type", "text/html")
+	var authorPage []string
+	authorPage = append(authorPage, fmt.Sprintf(`
+            <div class="bookpageLeft">
+                <div class="bookImg">
+                    <img src="%s">
+                </div>
+                <div class="bookAction">
+                    <div class="btn-group" role="group">
+                        <div class="dropdown">
+                            <button class="btn btn-success dropdown-toggle"
+                                    type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                            >Add to Favorite</button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Block Author</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+    `), author.Photo)
 }

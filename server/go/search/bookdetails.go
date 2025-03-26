@@ -279,8 +279,8 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                         hx-target=".bookpageContainer"
                         hx-swap="innerHTML"
                         hx-push-url="/author/%s"
-                        hx-cals='{
-                            "key": "%s",
+                        hx-vals='{
+                            "key": "/authors/%s",
                             "bookKey" : "%s"
                                 }'
                         >

@@ -60,7 +60,7 @@ func appendBooks(start, end, totalBook int, bookDisplay *[]string) {
 			break
 		}
 
-		if len(books[i].Author_name[0]) == 0 {
+		if len(books[i].Author_name) == 0 {
 			continue
 		}
 		var bookPic string

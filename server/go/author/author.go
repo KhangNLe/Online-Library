@@ -52,7 +52,7 @@ func findAuthor(authorKey, bookKey string, db *sqlx.DB) (Author, error) {
 
 		err = addAuthorToDB(author, db)
 		if err != nil {
-
+			return Author{}, err
 		}
 
 		return author, nil
@@ -60,7 +60,7 @@ func findAuthor(authorKey, bookKey string, db *sqlx.DB) (Author, error) {
 }
 
 func lookUpAuthor(authorKey string) (Author, error) {
-	url := "https://openlibrary.org/"
+	url := "https://openlibrary.org"
 	tail := ".json"
 
 	resp, err := http.Get(url + authorKey + tail)
@@ -86,7 +86,7 @@ func addAuthorToDB(author Author, db *sqlx.DB) error {
 	if author.Birth == "" {
 		author.Birth = "Unknown birth date"
 	}
-	_, err := db.Exec(`INSERT INTO Author VALUES (?, ?, ?, ?, ?, ?, ?)`,
+	_, err := db.Exec(`INSERT INTO Author VALUES (?, ?, ?, ?, ?, ?)`,
 		author.Key, author.Name, author.Birth, author.Photo, author.Death, author.Bio)
 
 	if err != nil {
@@ -95,13 +95,13 @@ func addAuthorToDB(author Author, db *sqlx.DB) error {
 
 	for _, link := range author.Links {
 
-		_, err = db.Exec(`INSERT INTO Links VALUES (?, ?)`, link.Title, link.Url)
+		_, err = db.Exec(`INSERT INTO Links (title, url) VALUES (?, ?)`, link.Title, link.Url)
 		if err != nil {
 			return err
 		}
 
-		_, err = db.Exec(`INSERT INTO Author_links VALUES (author_id, link_id)
-            SELECT ?, link_id FROM Links WHERE url = ?)`, author.Key, link.Url)
+		_, err = db.Exec(`INSERT INTO Author_links (author_id, link_id)
+            SELECT ?, link_id FROM Links WHERE url = ?`, author.Key, link.Url)
 
 		if err != nil {
 			return err
@@ -153,6 +153,10 @@ func getAuthorInfo(author *Author, authorKey string, db *sqlx.DB) error {
 		author.Birth = dob
 		author.Death = dod
 		author.Photo = photo
+		err = getAuthorLinks(author, db)
+		if err != nil {
+			return errors.New(fmt.Sprintf("Unable to retrieved links for author. Error: %s", err))
+		}
 		return nil
 	} else {
 		return errors.New(fmt.Sprintf("Could not access the Author information with the key %s", authorKey))

@@ -1,9 +1,11 @@
 package author
 
 import (
+	"book/author"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -64,6 +66,38 @@ func printAuthor(c *gin.Context, author Author) {
                     </div>
                 </div>
             </div>
+            <div class="bookpageRight">
+                <div class="bookTitle">
+        <p style="font-size: 25px;">Author: %s</p>
+                </div>
+                <div class="dob">
+                    <span>
+                        <h3 style="font-size: 17px; display: inline;">Birth Date:</h3>
+                        <p style="display: inline;">    %s</p>
+                    </spane>
+                </div>
+                <div class="dod">
+                    <span>
+                        <h3 style="font-size: 17px; display: inline;">Death Date:</h3>
+                        <p style="display: inline;">    %s</p>
+                    </span>
+                </div>  
+                <div class="bookDescription">
+                    <h3>Bio:</h3>
+                    <p>%s</p>
+                </div>
+            </div>
+    `, author.Photo,
+		author.Name,
+		author.Birth,
+		author.Death,
+		author.Bio))
 
-    `), author.Photo)
+	c.String(200, strings.Join(authorPage, ""))
+}
+
+func linksDisplay(authorPage *[]string, links []Link) {
+	for _, link := range author.Link {
+
+	}
 }

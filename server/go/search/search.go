@@ -89,8 +89,8 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
         <div class="btn-toolbar" role="toolbar">
         <div class="btn-group me-2" role="group">
         `)
-	if pageNum < 3 {
-		for i := 1; i < 4; i++ {
+	if totalPage < 4 {
+		for i := 1; i < totalPage; i++ {
 			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
                 <button type="button" 
                 class="pageBtn btn btn-primary"
@@ -105,10 +105,27 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
                 >%d</button>
                 `, i, text, i, i))
 		}
-		*bookDisplay = append(*bookDisplay, `
+	} else {
+		if pageNum < 3 {
+			for i := 1; i < 4; i++ {
+				*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+                <button type="button" 
+                class="pageBtn btn btn-primary"
+                hx-get="/book-search"
+                hx-target=".display"
+                hx-swap="innerHTML"
+                hx-vals='{"page": "%d",
+                            "text": "%s"
+                        }'
+                hx-swap-url="/book-search/page/%d"
+                hx-push-url="true"
+                >%d</button>
+                `, i, text, i, i))
+			}
+			*bookDisplay = append(*bookDisplay, `
             <button type="click" class="pageBtn btn btn-primary">...</button>
             `)
-		*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
             <button type="button" 
             class="pageBtn btn btn-primary"
             hx-get="/book-search"
@@ -121,8 +138,8 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
             hx-push-url="true"
             >%d</button>
             `, totalPage, text, totalPage, totalPage))
-	} else if pageNum+1 >= totalPage {
-		*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+		} else if pageNum+1 >= totalPage {
+			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
             <button type="button" 
             class="pageBtn btn btn-primary"
             hx-get="/book-search"
@@ -135,11 +152,11 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
             hx-push-url="true"
             >1</button>
             `, text))
-		*bookDisplay = append(*bookDisplay, `
+			*bookDisplay = append(*bookDisplay, `
             <button type="click" class="pageBtn btn btn-primary">...</button>
             `)
-		for i := totalPage - 2; i <= totalPage; i++ {
-			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+			for i := totalPage - 2; i <= totalPage; i++ {
+				*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
                 <button type="button" 
                 class="pageBtn btn btn-primary"
                 hx-get="/book-search"
@@ -152,10 +169,10 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
                 hx-push-url="true"
                 >%d</button>
                 `, i, text, i, i))
-		}
+			}
 
-	} else {
-		*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+		} else {
+			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
             <button type="button" 
             class="pageBtn btn btn-primary"
             hx-get="/book-search"
@@ -168,11 +185,11 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
             hx-push-url="true"
             >1</button>
             `, text))
-		*bookDisplay = append(*bookDisplay, `
+			*bookDisplay = append(*bookDisplay, `
             <button type="click" class="pageBtn btn btn-primary">...</button>
             `)
-		for i := pageNum - 1; i <= pageNum+1; i++ {
-			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+			for i := pageNum - 1; i <= pageNum+1; i++ {
+				*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
                 <button type="button" 
                 class="pageBtn btn btn-primary"
                 hx-get="/book-search"
@@ -186,12 +203,12 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
                 >%d</button>
                 `, i, text, i, i))
 
-		}
+			}
 
-		*bookDisplay = append(*bookDisplay, `
+			*bookDisplay = append(*bookDisplay, `
             <button type="click" class="pageBtn btn btn-primary">...</button>
             `)
-		*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
+			*bookDisplay = append(*bookDisplay, fmt.Sprintf(`
             <button type="button" 
             class="pageBtn btn btn-primary"
             hx-get="/book-search"
@@ -204,6 +221,7 @@ func addingPageBtn(bookDisplay *[]string, pageNum int, totalPage int, text strin
             hx-push-url="true"
             >%d</button>
             `, totalPage, text, totalPage, totalPage))
+		}
 	}
 
 	*bookDisplay = append(*bookDisplay, `

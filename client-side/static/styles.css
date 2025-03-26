@@ -1,3 +1,7 @@
+body {
+    font-family: "Helvetica", Times, serif;
+}
+
 .light-theme {
     background-color: #eceaea;
     color: #000000;
@@ -268,4 +272,8 @@ a {
 
 a:hover {
     background-color: #e1dbdb;
+}
+
+.navbar a:hover {
+    background-color: transparent;
 }

@@ -17,7 +17,7 @@
 <body class="light-theme">
     <header class="web-title">
         <div class="header-page">
-            <h1 hx-get="/" hx-target="body" hx-push-url="true" hx-swap="innerHTML" hx-trigger="click">My Library</h1>
+            <h1 hx-get="/" hx-target="html" hx-push-url="true" hx-swap="outerHTML" hx-trigger="click">My Library</h1>
             <div>
                 <button type="button" class="btn btn-dark" hx-get="/log-in" hx-target="#login-container"
                     hx-swap="innerHTML" hx-trigger="click" id="log-in">
@@ -55,30 +55,31 @@
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
                         <button class="nav-link btn btn-link" aria-current="page" hx-push-url="true" id="home"
-                            hx-get="/" hx-target="body" hx-trigger="click" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
-                            document.getElementById('navbarNavAltMarkup').classList.remove('show');
+                            hx-get="/" hx-target="body" hx-trigger="click" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNavAltMarkup" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
+                            document.querySelector('.navbar-brand').innerText = 'Home';
                             }">
                             Home</button>
                         <button class="nav-link btn btn-link" id="search" hx-push-url="true" hx-get="/search"
-                            hx-target=".contents" hx-trigger="click" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
-                                document.getElementById('navbarNavAltMarkup').classList.remove('show');
+                            hx-target=".contents" hx-trigger="click" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNavAltMarkup" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
                                 document.querySelector('.navbar-brand').innerText = 'Search';
                                 }">
                             Search</button>
                         <button class="nav-link btn btn-link" id="mybook" hx-push-url="true" hx-get="/my-books"
-                            hx-target=".contents" hx-trigger="click" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
-                                document.getElementById('navbarNavAltMarkup').classList.remove('show');
+                            hx-target=".contents" hx-trigger="click" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNavAltMarkup" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
                                 document.querySelector('.navbar-brand').innerText = 'My Books';
                                 }">
                             My Books</button>
                         <button class="nav-link btn btn-link" hx-push-url="true" id="recommend" hx-get="/recommend"
-                            hx-target=".contents" hx-trigger="click" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
-                                document.getElementById('navbarNavAltMarkup').classList.remove('show');
+                            hx-target=".contents" hx-trigger="click" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNavAltMarkup" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
                                 document.querySelector('.navbar-brand').innerText = 'Reccommend';
                                 }">Recommend</button>
                         <button class="nav-link btn btn-link" hx-push-url="true" id="about" hx-get="/about"
-                            hx-target=".contents" hx-trigger="click" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
-                                document.getElementById('navbarNavAltMarkup').classList.remove('show');
+                            hx-target=".contents" hx-trigger="click" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNavAltMarkup" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
                                 document.querySelector('.navbar-brand').innerText = 'About';
                                 }">About</button>
                     </div>

@@ -11,7 +11,7 @@ import (
 )
 
 type Link struct {
-	Title string `json:"tittle"`
+	Title string `json:"title"`
 	Url   string `json:"url"`
 }
 
@@ -164,7 +164,7 @@ func getAuthorInfo(author *Author, authorKey string, db *sqlx.DB) error {
 }
 
 func getAuthorLinks(author *Author, db *sqlx.DB) error {
-	ans, err := db.Query(`SELECT title, url FROM Links WHERE link_id = 
+	ans, err := db.Query(`SELECT title, url FROM Links WHERE link_id IN 
             (SELECT link_id FROM Author_links WHERE author_id = ?)`, author.Key)
 
 	if err != nil {

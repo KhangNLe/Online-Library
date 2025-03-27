@@ -77,6 +77,15 @@ document.addEventListener('htmx:afterSwap', function(e) {
         });
     }
 
+    const display = document.querySelector('.display');
+    if (display == null) {
+        window.addEventListener('scroll', function() {
+            const div = this.document.querySelector('.bookpageLeft');
+            const scrollPos = window.scrollY;
+
+            div.style.transform = `translateY(${scrollPos}px)`;
+        });
+    }
 });
 
 /**
@@ -117,3 +126,4 @@ function regexChecking(text_box, warning, length) {
 function createRegex(length) {
     return new RegExp(`^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^/_]).{${length},}$`);
 }
+

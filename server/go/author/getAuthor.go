@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -85,21 +86,51 @@ func printAuthor(c *gin.Context, author Author) {
                     <h3>Bio:</h3>
                     <p>%s</p>
                 </div>
-            </div>
     `, author.Photo,
 		author.Name,
 		author.Birth,
 		author.Death,
 		author.Bio))
-
+	linksDisplay(&authorPage, author)
 	c.String(200, strings.Join(authorPage, ""))
 }
 
 func linksDisplay(authorPage *[]string, author Author) {
-	for _, link := range author.Links {
+	*authorPage = append(*authorPage, fmt.Sprintf(`
+        <div class="accordion accordion-flush" id="accordionFlushLinks">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                Author's Links
+              </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushLinks">
+                <div class="accordion accordion-flush" id="accordionFlushTitle">
+        `))
+	for idx, link := range author.Links {
+		str := strconv.Itoa(idx)
 		*authorPage = append(*authorPage, fmt.Sprintf(`
-                <p>%s</p>
-                <p>%s</p>
-            `, link.Title, link.Url))
+            <div class="accordion-item">
+                <h2 class="accordion-header-link">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="%s" aria-expanded="false" aria-controls="flush-collapseOne">
+                        %s
+                    </button>
+                </h2>
+            <div id="%s" class="accordion-collapse collapse" data-bs-parent="#accordionFlushTitle">
+                <div class="accordion-body"><p><a href="%s">%s</a></p></div>
+                </div>
+            </div>
+			`, ("#flush-collapse"+str),
+			link.Title,
+			("flush-collapse"+str),
+			link.Url,
+			link.Title))
 	}
+	*authorPage = append(*authorPage, fmt.Sprintf(`
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        `))
 }

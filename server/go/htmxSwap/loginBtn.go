@@ -11,7 +11,9 @@ func LoginButton(c *gin.Context) {
         hx-post="/user-login" 
         hx-target="#login-warning"
         hx-swap="innerHTML"
-        hx-on::after-request=" if (event.detail.xhr.status >= 400) { document.getElementById('login-warning').innerHTML = event.detail.xhr.responseText; }"> 
+        hx-on::after-request=" 
+            if (event.detail.xhr.status >= 400) { document.getElementById('login-warning').innerHTML = event.detail.xhr.responseText; }
+        "> 
 <div class="modal fade" id="staticBackdrop"
         data-bs-backdrop="static" 
         data-bs-keyboard="true" 

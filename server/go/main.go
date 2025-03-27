@@ -73,13 +73,23 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	r.Static("/static", filepath.Join(frontFile, "static"))
 
 	private := r.Group("/")
-    private.Use(loginRequired()){
-        
-    }
+	private.Use(loginRequired())
+	{
+		private.GET("/my-books", func(ctx *gin.Context) {
+
+		})
+		private.GET("/user", func(c *gin.Context) {
+
+		})
+	}
 	r.LoadHTMLGlob(htmlFile)
 
 	r.GET("/", func(c *gin.Context) { //TODO adding stuffs to the home page
-		c.HTML(http.StatusOK, "index.html", nil)
+		session := sessions.Default(c)
+		auth := session.Get("authenticated")
+		if auth.(bool) == true {
+			c.HTML(http.StatusOK, "index.html", nil)
+		}
 	})
 
 	r.GET("/log-in", htmxswap.LoginButton)
@@ -95,10 +105,6 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 
 	r.POST("/book-search", search.DisplaySearch)
 	r.GET("/book-search", search.DisplaySearch)
-
-	r.GET("/my-books", func(ctx *gin.Context) {
-
-	})
 
 	r.POST("/book", func(c *gin.Context) {
 		search.BookDetail(c, db)
@@ -125,7 +131,7 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	r.POST("/user-login", func(c *gin.Context) {
 		userNm, err := loginsignup.UserLogIn(c, db)
 		if err != nil {
-			c.Status(http.StatusInternalServerError)
+			log.Printf("Something wrong with the login process. Error: %s", err)
 		}
 		session := sessions.Default(c)
 		session.Set("user_id", userNm)
@@ -140,12 +146,10 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 
 		}
 
-		c.Header("HX-Redirect", "/user")
-		c.Status(http.StatusOK)
-
-	})
-
-	r.GET("/user", func(c *gin.Context) {
+		c.Header("Content-Type", "text/html")
+		c.String(http.StatusOK, `
+            <p>Log in success :) </p>
+        `)
 
 	})
 

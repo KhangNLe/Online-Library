@@ -1,7 +1,6 @@
 package author
 
 import (
-	"book/author"
 	"fmt"
 	"log"
 	"net/http"
@@ -96,8 +95,11 @@ func printAuthor(c *gin.Context, author Author) {
 	c.String(200, strings.Join(authorPage, ""))
 }
 
-func linksDisplay(authorPage *[]string, links []Link) {
-	for _, link := range author.Link {
-
+func linksDisplay(authorPage *[]string, author Author) {
+	for _, link := range author.Links {
+		*authorPage = append(*authorPage, fmt.Sprintf(`
+                <p>%s</p>
+                <p>%s</p>
+            `, link.Title, link.Url))
 	}
 }

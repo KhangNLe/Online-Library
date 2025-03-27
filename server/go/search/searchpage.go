@@ -16,7 +16,7 @@ func SearchPage(c *gin.Context) {
                         hx-push-url="true"
                         hx-on::after-request=" if (event.detail.xhr.status >= 400) { document.querySelector('.search-display').innerHTML = event.detail.xhr.responseText; }" 
                         >
-            <input class="form-control me-2" size="75%" name="query" type="search" autocomplete="off" placeholder="Enter title or author" aria-label="Search">
+            <input class="form-control me-2" size="75%" name="query" type="search" autocomplete="off" placeholder="Enter the book title" aria-label="Search">
                     <button id="searchBtn" class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>

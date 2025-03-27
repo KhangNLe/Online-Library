@@ -25,32 +25,40 @@ type Results struct {
 
 var books []Results
 
-func SearchBook(text string) []Results {
+func SearchBook(text string) ([]Results, error) {
 	url := "https://openlibrary.org/search.json?q="
 	text = strings.ReplaceAll(text, " ", "+")
 	fields := "&fields=author_key,author_name,cover_i,title,key"
 	limit := "&limit=250"
-	return getSearchBook(url + text + fields + limit)
+	results, err := getSearchBook(url + text + fields + limit)
+	if err != nil {
+		return []Results{}, err
+	}
+
+	return results, nil
 }
 
-func getSearchBook(searchStr string) []Results {
+func getSearchBook(searchStr string) ([]Results, error) {
 
 	var search Booksearch
 
 	resp, err := http.Get(searchStr)
 	if err != nil {
-		log.Printf("Could not fetch the %s url, erro: %s", (searchStr), err)
+		log.Printf("Could not fetch the %s url, error: %s", (searchStr), err)
+		return []Results{}, err
+
 	}
 
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&search)
 	if err != nil {
-		log.Printf("Could not decode the api, err: %s", err)
+		log.Printf("Could not decode the api, error: %s", err)
+		return []Results{}, err
 	}
 	books = search.Result
 
-	return search.Result
+	return search.Result, nil
 }
 
 func appendBooks(start, end, totalBook int, bookDisplay *[]string) {

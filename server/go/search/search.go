@@ -43,7 +43,14 @@ func DisplaySearch(c *gin.Context) {
 
 	var totalBook int
 
-	books := SearchBook(text)
+	books, err := SearchBook(text)
+	if err != nil {
+		c.Header("Content-Type", "text/html")
+		c.String(200, fmt.Sprintln(`
+            <p>We could not fetch your books at the current moment, please try again in a bit.</p>
+            `))
+		return
+	}
 	totalBook = len(books)
 
 	log.Println(totalBook)

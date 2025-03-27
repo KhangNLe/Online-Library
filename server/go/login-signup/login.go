@@ -12,7 +12,7 @@ type Login struct {
 	Password string `json:"password"`
 }
 
-func UserLogIn(c *gin.Context, db *sqlx.DB) {
+func UserLogIn(c *gin.Context, db *sqlx.DB) (string, error) {
 	var user Login
 	user.UserName = c.PostForm("userid")
 	user.Password = c.PostForm("password")
@@ -25,7 +25,7 @@ func UserLogIn(c *gin.Context, db *sqlx.DB) {
                 Database Error: Could not login into the account at the moment. Please try again later.
             </p>
         `)
-		return
+		return "", err
 	}
 
 	if !resp.Next() {
@@ -35,11 +35,11 @@ func UserLogIn(c *gin.Context, db *sqlx.DB) {
                 Could not find any user with said username.
             </p>
         `)
-		return
+		return "", err
 	}
 	resp.Close()
 
-	resp, err = db.Query("SELECT hash_pass FROM USER WHERE user_name=?", user.UserName)
+	resp, err = db.Query("SELECT pass_hash FROM USER WHERE user_name=?", user.UserName)
 	if err != nil {
 		c.Header("Content-Type", "text/html")
 		c.String(http.StatusInternalServerError, `
@@ -47,7 +47,7 @@ func UserLogIn(c *gin.Context, db *sqlx.DB) {
                 Database Error: Could not login into your account at the moment. Please try again later.
             </p>
         `)
-		return
+		return "", err
 	}
 	defer resp.Close()
 
@@ -65,9 +65,7 @@ func UserLogIn(c *gin.Context, db *sqlx.DB) {
                 Username or password did not match, please try again.
             </p>
         `)
-		return
+		return "", err
 	}
-
-	c.Header("HX-Redirect", "/user")
-	c.Status(http.StatusOK)
+	return user.UserName, nil
 }

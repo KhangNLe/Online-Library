@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -55,8 +57,25 @@ func connectDB(dbPath string) (*sqlx.DB, error) {
 
 func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	r := gin.Default()
+	store, err := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret-key"))
+	if err != nil {
+		log.Printf("Could not connect to redis. Error: %s", err)
+	}
+	r.Use(sessions.Sessions("mysesh", store))
+
+	r.Use(func(c *gin.Context) {
+		session := sessions.Default(c)
+		if session == nil {
+			log.Printf("Could not conenct to session, Error: %s", err)
+		}
+		c.Next()
+	})
 	r.Static("/static", filepath.Join(frontFile, "static"))
 
+	private := r.Group("/")
+    private.Use(loginRequired()){
+        
+    }
 	r.LoadHTMLGlob(htmlFile)
 
 	r.GET("/", func(c *gin.Context) { //TODO adding stuffs to the home page
@@ -85,20 +104,6 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		search.BookDetail(c, db)
 	})
 
-	/*
-		r.GET("/book/works/:bookKey", func(c *gin.Context) {
-			bookKey := c.Param("bookKey")
-			if bookKey != "123" {
-				key = bookKey
-			}
-
-			if c.GetHeader("HX-Request") == "true" {
-				search.LoadingBookDetail(c, key, db)
-			} else {
-				c.HTML(http.StatusOK, "reload.html", nil)
-			}
-		}) */
-
 	r.POST("/author", func(c *gin.Context) {
 		author.GetAuthor(c, db)
 	})
@@ -118,7 +123,26 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	})
 
 	r.POST("/user-login", func(c *gin.Context) {
-		loginsignup.UserLogIn(c, db)
+		userNm, err := loginsignup.UserLogIn(c, db)
+		if err != nil {
+			c.Status(http.StatusInternalServerError)
+		}
+		session := sessions.Default(c)
+		session.Set("user_id", userNm)
+		session.Set("authenticated", true)
+		if err := session.Save(); err != nil {
+			c.Header("Content-Type", "text/html")
+			c.String(http.StatusInternalServerError, `
+            <br><p style="color: red; font-size: 14px;">
+                Session Error: Could not login into the account at the moment. Please try again later.
+            </p> 
+            `)
+
+		}
+
+		c.Header("HX-Redirect", "/user")
+		c.Status(http.StatusOK)
+
 	})
 
 	r.GET("/user", func(c *gin.Context) {
@@ -126,4 +150,23 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	})
 
 	return r
+}
+
+func loginRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		auth := session.Get("authenticated")
+
+		if auth == nil || auth.(bool) != true {
+			if c.GetHeader("HX-Request") == "true" {
+				c.Header("HX-Redirect", "/login")
+				c.AbortWithStatus(http.StatusUnauthorized)
+			} else {
+				c.Redirect(http.StatusFound, "/")
+				c.Abort()
+			}
+			return
+		}
+		c.Next()
+	}
 }

@@ -1,6 +1,7 @@
 package loginsignup
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,7 @@ func RegisterUser(c *gin.Context, db *sqlx.DB) {
 		c.String(http.StatusNotFound, `
             <p style="color:red; font-size: 14px;">Error: Database Service error, please try again later.</p>
             `)
+		log.Printf("Data service error: %s", err)
 		return
 	}
 	defer existenUser.Close()
@@ -39,11 +41,12 @@ func RegisterUser(c *gin.Context, db *sqlx.DB) {
 		return
 	}
 
-	if _, err := db.Exec("INSERT INTO USER(user_name, hash_pass) VALUES (?, ?)", userSignup.UserName, hashPass); err != nil {
+	if _, err := db.Exec("INSERT INTO USER(user_name, pass_hash) VALUES (?, ?)", userSignup.UserName, hashPass); err != nil {
 		c.Header("Content-Type", "text/html")
 		c.String(http.StatusNotAcceptable, `
             <p style="color:red; font-size: 14px;">Database Service error: We could not register you at the current moment, please try again later.</p>
             `)
+		log.Printf("Data service error: %s", err)
 		return
 	}
 

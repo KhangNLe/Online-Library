@@ -5,6 +5,7 @@ import (
 	"book/htmxSwap"
 	"book/login-signup"
 	"book/search"
+	user "book/user/add"
 	"log"
 	"net/http"
 	"os"
@@ -81,14 +82,35 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		private.GET("/user", func(c *gin.Context) {
 
 		})
+		private.GET("/logout", func(c *gin.Context) {
+			session := sessions.Default(c)
+			session.Delete("user_id")
+			session.Set("authenticated", false)
+			if err := session.Save(); err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+			c.Header("HX-Redirect", "/")
+			c.Status(http.StatusOK)
+		})
+		private.GET("/wantToRead", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.WantToRead(userId, c, db)
+		})
 	}
 	r.LoadHTMLGlob(htmlFile)
 
 	r.GET("/", func(c *gin.Context) { //TODO adding stuffs to the home page
 		session := sessions.Default(c)
 		auth := session.Get("authenticated")
-		if auth.(bool) == true {
+		if auth == nil || auth.(bool) != true {
 			c.HTML(http.StatusOK, "index.html", nil)
+		} else {
+			c.HTML(http.StatusOK, "user_logged_in.html", nil)
 		}
 	})
 
@@ -132,24 +154,23 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		userNm, err := loginsignup.UserLogIn(c, db)
 		if err != nil {
 			log.Printf("Something wrong with the login process. Error: %s", err)
-		}
-		session := sessions.Default(c)
-		session.Set("user_id", userNm)
-		session.Set("authenticated", true)
-		if err := session.Save(); err != nil {
-			c.Header("Content-Type", "text/html")
-			c.String(http.StatusInternalServerError, `
+		} else {
+			session := sessions.Default(c)
+			session.Set("user_id", userNm)
+			session.Set("authenticated", true)
+			if err := session.Save(); err != nil {
+				c.Header("Content-Type", "text/html")
+				c.String(http.StatusInternalServerError, `
             <br><p style="color: red; font-size: 14px;">
                 Session Error: Could not login into the account at the moment. Please try again later.
             </p> 
             `)
 
+			} else {
+				c.Header("HX-Redirect", "/")
+				c.Status(http.StatusOK)
+			}
 		}
-
-		c.Header("Content-Type", "text/html")
-		c.String(http.StatusOK, `
-            <p>Log in success :) </p>
-        `)
 
 	})
 

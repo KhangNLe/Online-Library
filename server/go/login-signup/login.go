@@ -2,6 +2,7 @@ package loginsignup
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -67,5 +68,32 @@ func UserLogIn(c *gin.Context, db *sqlx.DB) (string, error) {
         `)
 		return "", err
 	}
-	return user.UserName, nil
+
+	ans, err := db.Query(`SELECT user_id FROM User WHERE user_name = ?`, user.UserName)
+	if err != nil {
+		c.Header("Content-Type", "text/html")
+		c.String(http.StatusInternalServerError, `
+            <br><p style="color: red; font-size: 14px;">
+                Database Error: Could not login into the account at the moment. Please try again later.
+            </p>
+        `)
+		return "", err
+	}
+	defer ans.Close()
+
+	if ans.Next() {
+		var id int
+		err = ans.Scan(&id)
+		if err != nil {
+			c.Header("Content-Type", "text/html")
+			c.String(http.StatusInternalServerError, `
+                <br><p style="color: red; font-size: 14px;">
+                    Database Error: Could not login into the account at the moment. Please try again later.
+                </p>
+            `)
+			return "", err
+		}
+		return strconv.Itoa(id), nil
+	}
+	return "", nil
 }

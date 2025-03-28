@@ -9,8 +9,6 @@ func LoginButton(c *gin.Context) {
 	c.String(200, `
 <form class="user-signin" 
         hx-post="/user-login" 
-        hx-target="#login-warning"
-        hx-swap="innerHTML"
         hx-on::after-request=" 
             if (event.detail.xhr.status >= 400) { document.getElementById('login-warning').innerHTML = event.detail.xhr.responseText; }
         "> 

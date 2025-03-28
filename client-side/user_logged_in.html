@@ -19,10 +19,24 @@
         <div class="header-page">
             <h1 hx-get="/" hx-target="body" hx-push-url="true" hx-swap="outerHTML" hx-trigger="click">My Library</h1>
             <div>
-                <button type="button" class="btn btn-dark" hx-get="/log-in" hx-target="#login-container"
-                    hx-swap="innerHTML" hx-trigger="click" id="log-in">
-                    Log-In
-                </button>
+                <div class="btn-group" id="user" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Account
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" hx-target=".content" hx-swap="innerHTML" hx-get="/profile"
+                                hx-trigger="click">Profile</a></li>
+                        <li><a class="dropdown-item" hx-target=".content" hx-swap="innerHTML" hx-get="/favorite"
+                                hx-trigger="click">Favorites</a></li>
+                        <li><a class="dropdown-item" hx-get="/to-read" hx-target=".content" hx-swap="innerHTML"
+                                hx-trigger="click">To Read</a></li>
+                        <li><a class="dropdown-item" hx-get="/reading" hx-target=".content" hx.swap="innerHTML"
+                                hx-trigger="click">Reading</a></li>
+                        <li><a class="dropdown-item" hx-get="/logout" hx-trigger="click">Log Out</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div id="login-container"></div>
     </header>

@@ -258,9 +258,14 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                     <div class="btn-group" role="group">
                         <div class="dropdown">
                             <button class="btn btn-success dropdown-toggle"
-                                    type="button" data-bs-toggle="dropdown"
+                                    type="button" id="wantToRead" data-bs-toggle="dropdown"
                                     aria-expanded="false"
-                            >Want to Read</button>
+                            ><a hx-get="/wantToRead"
+                                hx-target="#wantToRead"
+                                hx-swap="innerHTML"
+                                >
+                                Want to Read
+                            </a></button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Add to Library</a></li>
                                 <li><a class="dropdown-item" href="#">Reading</a></li>

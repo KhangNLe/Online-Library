@@ -256,7 +256,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                 </div>
                 <div class="bookAction">
                     <div class="btn-group" role="group">
-                        <div class="dropdown">
+                        <div class="dropdown bookBtn">
                             <button class="btn btn-success dropdown-toggle"
                                     type="button" id="wantToRead" data-bs-toggle="dropdown"
                                     aria-expanded="false"

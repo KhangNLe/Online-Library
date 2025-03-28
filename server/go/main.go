@@ -99,7 +99,23 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
-			user.WantToRead(userId, c, db)
+			user.AddingToLibrary(userId, c, db, 0)
+		})
+		private.GET("/reading", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusBadRequest)
+			}
+			user.AddingToLibrary(userId, c, db, 1)
+		})
+		private.GET("/alreadyRead", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.AddingToLibrary(userId, c, db, 69)
 		})
 	}
 	r.LoadHTMLGlob(htmlFile)
@@ -184,7 +200,7 @@ func loginRequired() gin.HandlerFunc {
 
 		if auth == nil || auth.(bool) != true {
 			if c.GetHeader("HX-Request") == "true" {
-				c.Header("HX-Redirect", "/login")
+				c.Header("HX-Redirect", "/user-login")
 				c.AbortWithStatus(http.StatusUnauthorized)
 			} else {
 				c.Redirect(http.StatusFound, "/")

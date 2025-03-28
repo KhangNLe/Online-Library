@@ -261,15 +261,49 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                     type="button" id="wantToRead" data-bs-toggle="dropdown"
                                     aria-expanded="false"
                             ><a hx-get="/wantToRead"
-                                hx-target="#wantToRead"
+                                hx-target=".responeMessage"
                                 hx-swap="innerHTML"
+                                hx-vals='{
+                                    "bookKey": "%s"
+                                }'
+                                hx-on::after-request="
+                                    if (event.detail.xhr.status >= 400){
+                                        document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                    }"
                                 >
                                 Want to Read
                             </a></button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Add to Library</a></li>
-                                <li><a class="dropdown-item" href="#">Reading</a></li>
+                                <li><a class="dropdown-item"
+                                    href="#"
+                                    hx-get="/alreadyRead"
+                                    hx-target=".repsoneMessage"
+                                    hx-swap="innerHTML"
+                                    hx-trigger="click"
+                                    hx-vals='{
+                                        "bookKey" : "%s"
+                                        }'
+                                    hx-on::after-request="
+                                    if (event.detail.xhr.status >= 400){
+                                        document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                    }"
+                                    >Add to Library</a></li>
+                                <li><a class="dropdown-item" 
+                                    href="#"
+                                    hx-get="/reading"
+                                    hx-target=".responeMessage"
+                                    hx-swap="innerHTML"
+                                    hx-trigger="click"
+                                    hx-vals='{
+                                        "bookKey" : "%s"
+                                        }'
+                                    hx-on::after-request="
+                                        if (event.detail.xhr.status >= 400){
+                                        document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                        }"
+                                    >Reading</a></li>
                             </ul>
+                        <div class="responeMessage"></div>
                         </div>
                     </div>
                 </div>
@@ -298,6 +332,9 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                     <spane>Genres:</span>
                     <ul class="genreList">
         `, bookDetail.Cover,
+		bookDetail.Key,
+		bookDetail.Key,
+		bookDetail.Key,
 		bookDetail.Title,
 		bookDetail.AuthorKey,
 		bookDetail.AuthorKey,

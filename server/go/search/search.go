@@ -27,6 +27,7 @@ func DisplaySearch(c *gin.Context) {
             <p style="font-size:24px;">We are experiencing some techincal difficulty, please try again later
             </p>
             `)
+		log.Printf("Error with getting hx-vals. Error: %s", err)
 	}
 
 	currPage, _ := page["page"]
@@ -49,11 +50,11 @@ func DisplaySearch(c *gin.Context) {
 		c.String(200, fmt.Sprintln(`
             <p>We could not fetch your books at the current moment, please try again in a bit.</p>
             `))
+		log.Printf("Error while searching book. Error %s", err)
 		return
 	}
 	totalBook = len(books)
 
-	log.Println(totalBook)
 	totalPage := 0
 	if totalBook%21 == 0 {
 		totalPage = totalBook / 21

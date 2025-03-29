@@ -213,7 +213,24 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			user.AddingToLibrary(userId, c, db, 69)
 		})
 		private.GET("/recommend", func(c *gin.Context) {
+		})
 
+		private.GET("/favorite-author/add", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.AddingToLibrary(userId, c, db, 2)
+		})
+
+		private.GET("/block-author/add", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.AddingToLibrary(userId, c, db, 3)
 		})
 	}
 

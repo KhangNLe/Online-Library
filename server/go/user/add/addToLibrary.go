@@ -20,7 +20,7 @@ func AddingToLibrary(userId string, c *gin.Context, db *sqlx.DB, optinon int) {
 		return
 	}
 
-	bookKey, _ := hxVals["bookKey"]
+	key, _ := hxVals["key"]
 
 	query, err := db.Beginx()
 	if err != nil {
@@ -70,16 +70,32 @@ func AddingToLibrary(userId string, c *gin.Context, db *sqlx.DB, optinon int) {
 	}
 
 	libSesh := ""
+	bookOrAuthor := ""
 	switch optinon {
 	case 0:
-		err = wantToRead(c, query, libID, bookKey, num)
+		err = wantToRead(c, query, libID, key, num)
 		libSesh = "Wanting to Read"
+		bookOrAuthor = "book"
 	case 1:
-		err = addToReading(c, query, libID, bookKey, num)
+		err = addToReading(c, query, libID, key, num)
 		libSesh = "Reading"
+		bookOrAuthor = "book"
+	case 2:
+		err = addFavoriteAuthor(c, query, key, libID)
+		libSesh = "Favorite Author"
+		bookOrAuthor = "author"
+	case 3:
+		err = addToBlockAuthor(c, query, libID, key)
+		libSesh = "Block Author"
+		bookOrAuthor = "author"
+	case 4:
+		err = addToFavoriteBook(c, query, libID, key)
+		libSesh = "Favorite Book"
+		bookOrAuthor = "book"
 	default:
-		err = addToAlreadyRead(c, query, libID, bookKey, num)
+		err = addToAlreadyRead(c, query, libID, key, num)
 		libSesh = "Already Read"
+		bookOrAuthor = "book"
 	}
 
 	if err != nil {
@@ -98,9 +114,9 @@ func AddingToLibrary(userId string, c *gin.Context, db *sqlx.DB, optinon int) {
 	c.Header("Content-Type", "text/html")
 	c.String(http.StatusOK, fmt.Sprintf(`
         <br><p style="color: green; font-size: 15px; margin-left: -20px;">
-        The book is added to your %s session.
+        The %s is added to your %s session.
         </p></br>
-    `, libSesh))
+    `, bookOrAuthor, libSesh))
 
 }
 

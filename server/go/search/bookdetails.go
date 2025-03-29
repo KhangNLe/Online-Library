@@ -263,7 +263,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                             hx-target=".responeMessage"
                             hx-swap="innerHTML"
                             hx-vals='{
-                                "bookKey": "%s"
+                                "key": "%s"
                                 }'
                             hx-on::after-request="
                                 if (event.detail.xhr.status >= 400){
@@ -286,7 +286,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
-                                        "bookKey" : "%s"
+                                        "key" : "%s"
                                         }'
                                     hx-on::after-request="
                                     if (event.detail.xhr.status >= 400){
@@ -300,7 +300,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
-                                        "bookKey" : "%s"
+                                        "key" : "%s"
                                         }'
                                     hx-on::after-request="
                                         if (event.detail.xhr.status >= 400){

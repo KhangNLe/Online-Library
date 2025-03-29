@@ -15,13 +15,40 @@ type Link struct {
 	Url   string `json:"url"`
 }
 
+type AuthorBio struct {
+	Type  string
+	Value string
+}
+
+func (ab *AuthorBio) UnmarshalJSON(b []byte) error {
+	var str string
+	if err := json.Unmarshal(b, &str); err == nil {
+		*ab = AuthorBio{Value: str}
+		return nil
+	}
+
+	type description struct {
+		Type  string `json:"type"`
+		Value string `json:"value"`
+	}
+	var obj description
+	if err := json.Unmarshal(b, &obj); err != nil {
+		return err
+	}
+	*ab = AuthorBio{
+		Type:  obj.Type,
+		Value: obj.Value,
+	}
+	return nil
+}
+
 type Author struct {
-	Key     string `json:"key"`
-	Bio     string `json:"bio"`
-	Name    string `json:"personal_name"`
-	Birth   string `json:"birth_date"`
-	Death   string `json:"death_date"`
-	Links   []Link `json:"links"`
+	Key     string    `json:"key"`
+	Bio     AuthorBio `json:"bio"`
+	Name    string    `json:"personal_name"`
+	Birth   string    `json:"birth_date"`
+	Death   string    `json:"death_date"`
+	Links   []Link    `json:"links"`
 	Photo   string
 	BookKey string
 }
@@ -87,7 +114,7 @@ func addAuthorToDB(author Author, db *sqlx.DB) error {
 		author.Birth = "Unknown birth date"
 	}
 	_, err := db.Exec(`INSERT INTO Author VALUES (?, ?, ?, ?, ?, ?)`,
-		author.Key, author.Name, author.Birth, author.Photo, author.Death, author.Bio)
+		author.Key, author.Name, author.Birth, author.Photo, author.Death, author.Bio.Value)
 
 	if err != nil {
 		return err
@@ -147,7 +174,7 @@ func getAuthorInfo(author *Author, authorKey string, db *sqlx.DB) error {
 			return err
 		}
 
-		author.Bio = bio
+		author.Bio.Value = bio
 		author.Key = key
 		author.Name = name
 		author.Birth = dob

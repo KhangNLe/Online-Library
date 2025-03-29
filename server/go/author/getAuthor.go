@@ -61,7 +61,7 @@ func printAuthor(c *gin.Context, author Author) {
                             hx-target=".responeMessage"
                             hx-swap="innerHTML"
                             hx-vals='{
-                                "authorKey": "%s"
+                                "key": "%s"
                                 }'
                             hx-on::after-request="
                                 if (event.detail.xhr.status >= 400){
@@ -75,10 +75,18 @@ func printAuthor(c *gin.Context, author Author) {
                                     aria-expanded="false"
                             ></button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Block Author</a></li>
+                                <li><a class="dropdown-item"
+                                    hx-get="/block-author/add"
+                                    hx-target=".responeMessage"
+                                    hx-swap="innerHTML"
+                                    hx-vals='{
+                                        "key" : "%s"
+                                        }'
+                                    >Block Author</a></li>
                             </ul>
                         </div>
                     </div>
+                    <div class="responeMessage"></div>
                 </div>
             </div>
             <div class="contentRight">
@@ -103,10 +111,11 @@ func printAuthor(c *gin.Context, author Author) {
                 </div>
     `, author.Photo,
 		author.Key,
+		author.Key,
 		author.Name,
 		author.Birth,
 		author.Death,
-		author.Bio))
+		author.Bio.Value))
 	linksDisplay(&authorPage, author)
 	c.String(200, strings.Join(authorPage, ""))
 }

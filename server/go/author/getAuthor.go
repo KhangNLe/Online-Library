@@ -48,17 +48,32 @@ func printAuthor(c *gin.Context, author Author) {
 	c.Header("Content-Type", "text/html")
 	var authorPage []string
 	authorPage = append(authorPage, fmt.Sprintf(`
-            <div class="bookpageLeft">
+            <div class="contentLeft">
                 <div class="bookImg">
                     <img src="%s">
                 </div>
                 <div class="bookAction">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown">
+                    <div class="btn-group" role="group" 
+                        style="max-height: 60px; margin-left: -12%% ;">
+                        <button type="button" class="btn btn-success"
+                            style="width: 250px;">
+                            <a hx-get="/favorite-author/add"
+                            hx-target=".responeMessage"
+                            hx-swap="innerHTML"
+                            hx-vals='{
+                                "authorKey": "%s"
+                                }'
+                            hx-on::after-request="
+                                if (event.detail.xhr.status >= 400){
+                                    document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                }"
+                            >Add to Favorite</a>
+                        </button>
+                            <div class="dropdown btn-group" style="width: 30px;">
                             <button class="btn btn-success dropdown-toggle"
                                     type="button" data-bs-toggle="dropdown"
                                     aria-expanded="false"
-                            >Add to Favorite</button>
+                            ></button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Block Author</a></li>
                             </ul>
@@ -66,7 +81,7 @@ func printAuthor(c *gin.Context, author Author) {
                     </div>
                 </div>
             </div>
-            <div class="bookpageRight">
+            <div class="contentRight">
                 <div class="bookTitle">
         <p style="font-size: 25px;">Author: %s</p>
                 </div>
@@ -82,11 +97,12 @@ func printAuthor(c *gin.Context, author Author) {
                         <p style="display: inline;">    %s</p>
                     </span>
                 </div>  
-                <div class="bookDescription">
+                <div class="bookDescription" style="max-width: 75%%;">
                     <h3>Bio:</h3>
                     <p>%s</p>
                 </div>
     `, author.Photo,
+		author.Key,
 		author.Name,
 		author.Birth,
 		author.Death,
@@ -97,7 +113,8 @@ func printAuthor(c *gin.Context, author Author) {
 
 func linksDisplay(authorPage *[]string, author Author) {
 	*authorPage = append(*authorPage, fmt.Sprintf(`
-        <div class="accordion accordion-flush" id="accordionFlushLinks">
+        <div class="accordion accordion-flush" id="accordionFlushLinks"
+            style="max-width: 275px;">
           <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">

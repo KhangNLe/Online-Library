@@ -5,7 +5,8 @@ import (
 	"book/htmxSwap"
 	"book/login-signup"
 	"book/search"
-	user "book/user/add"
+	"book/user/add"
+	"book/user/mybook"
 	"log"
 	"net/http"
 	"os"
@@ -24,8 +25,6 @@ const (
 	serverPath  = "server"
 	dbName      = "library.db"
 )
-
-var key string
 
 func main() {
 	home, err := os.UserHomeDir()
@@ -73,51 +72,6 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	})
 	r.Static("/static", filepath.Join(frontFile, "static"))
 
-	private := r.Group("/")
-	private.Use(loginRequired())
-	{
-		private.GET("/my-books", func(ctx *gin.Context) {
-
-		})
-		private.GET("/user", func(c *gin.Context) {
-
-		})
-		private.GET("/logout", func(c *gin.Context) {
-			session := sessions.Default(c)
-			session.Delete("user_id")
-			session.Set("authenticated", false)
-			if err := session.Save(); err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-			c.Header("HX-Redirect", "/")
-			c.Status(http.StatusOK)
-		})
-		private.GET("/wantToRead", func(c *gin.Context) {
-			session := sessions.Default(c)
-			userId, ok := session.Get("user_id").(string)
-			if !ok {
-				c.AbortWithStatus(http.StatusInternalServerError)
-			}
-			user.AddingToLibrary(userId, c, db, 0)
-		})
-		private.GET("/reading", func(c *gin.Context) {
-			session := sessions.Default(c)
-			userId, ok := session.Get("user_id").(string)
-			if !ok {
-				c.AbortWithStatus(http.StatusBadRequest)
-			}
-			user.AddingToLibrary(userId, c, db, 1)
-		})
-		private.GET("/alreadyRead", func(c *gin.Context) {
-			session := sessions.Default(c)
-			userId, ok := session.Get("user_id").(string)
-			if !ok {
-				c.AbortWithStatus(http.StatusInternalServerError)
-			}
-			user.AddingToLibrary(userId, c, db, 69)
-		})
-	}
 	r.LoadHTMLGlob(htmlFile)
 
 	r.GET("/", func(c *gin.Context) { //TODO adding stuffs to the home page
@@ -152,10 +106,6 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		author.GetAuthor(c, db)
 	})
 
-	r.GET("/recommend", func(c *gin.Context) {
-
-	})
-
 	r.GET("/sign-up", func(c *gin.Context) {
 		htmxswap.SignUpBtn(c)
 	})
@@ -187,9 +137,9 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 				c.Status(http.StatusOK)
 			}
 		}
-
 	})
 
+	privateRouter(r, db)
 	return r
 }
 
@@ -210,4 +160,61 @@ func loginRequired() gin.HandlerFunc {
 		}
 		c.Next()
 	}
+}
+
+func privateRouter(r *gin.Engine, db *sqlx.DB) {
+	private := r.Group("/")
+	private.Use(loginRequired())
+	{
+		private.GET("/my-books", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			mybook.MyBookPage(c, userId)
+		})
+		private.GET("/user", func(c *gin.Context) {
+
+		})
+		private.GET("/logout", func(c *gin.Context) {
+			session := sessions.Default(c)
+			session.Delete("user_id")
+			session.Set("authenticated", false)
+			if err := session.Save(); err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+			c.Header("HX-Redirect", "/")
+			c.Status(http.StatusOK)
+		})
+		private.GET("/wantToRead/add", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.AddingToLibrary(userId, c, db, 0)
+		})
+		private.GET("/reading/add", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusBadRequest)
+			}
+			user.AddingToLibrary(userId, c, db, 1)
+		})
+		private.GET("/alreadyRead/add", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.AddingToLibrary(userId, c, db, 69)
+		})
+		private.GET("/recommend", func(c *gin.Context) {
+
+		})
+	}
+
 }

@@ -249,34 +249,39 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
 	var details []string
 	c.Header("Content-Type", "text/html")
 	details = append(details, fmt.Sprintf(`
-        <div class="bookpageContainer">
-            <div class="bookpageLeft">
+        <div class="contentContainer">
+            <div class="contentLeft">
                 <div class="bookImg">
                     <img src="%s">
                 </div>
                 <div class="bookAction">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown bookBtn">
+                    <div class="btn-group" role="group"
+                        style="max-height: 60px; margin-left: -12%% ;">
+                        <button type="button" class="btn btn-success"
+                            style="width: 250px;">
+                            <a hx-get="/wantToRead/add"
+                            hx-target=".responeMessage"
+                            hx-swap="innerHTML"
+                            hx-vals='{
+                                "bookKey": "%s"
+                                }'
+                            hx-on::after-request="
+                                if (event.detail.xhr.status >= 400){
+                                    document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                }"
+                            >Want to Read</a>
+                        </button>
+                        <div class="dropdown bookBtn btn-group"
+                            style="width: 30px;">
                             <button class="btn btn-success dropdown-toggle"
                                     type="button" id="wantToRead" data-bs-toggle="dropdown"
                                     aria-expanded="false"
-                            ><a hx-get="/wantToRead"
-                                hx-target=".responeMessage"
-                                hx-swap="innerHTML"
-                                hx-vals='{
-                                    "bookKey": "%s"
-                                }'
-                                hx-on::after-request="
-                                    if (event.detail.xhr.status >= 400){
-                                        document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
-                                    }"
-                                >
-                                Want to Read
-                            </a></button>
+                            >
+                            </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item"
                                     href="#"
-                                    hx-get="/alreadyRead"
+                                    hx-get="/alreadyRead/add"
                                     hx-target=".repsoneMessage"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
@@ -290,7 +295,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                     >Add to Library</a></li>
                                 <li><a class="dropdown-item" 
                                     href="#"
-                                    hx-get="/reading"
+                                    hx-get="/reading/add"
                                     hx-target=".responeMessage"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
@@ -308,14 +313,14 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                     </div>
                 </div>
             </div>
-            <div class="bookpageRight">
+            <div class="contentRight">
                 <div class="bookTitle">
                     <h3>%s</h3>
                     <p>Author: <a
                         id="author"
                         href="#"
                         hx-post="/author"
-                        hx-target=".bookpageContainer"
+                        hx-target=".contentContainer"
                         hx-swap="innerHTML"
                         hx-push-url="/author/%s"
                         hx-vals='{

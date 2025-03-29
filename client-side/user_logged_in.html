@@ -25,14 +25,10 @@
                         Account
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" hx-target=".content" hx-swap="innerHTML" hx-get="/profile"
+                        <li><a class="dropdown-item" hx-target=".contents" hx-swap="innerHTML" hx-get="/profile"
                                 hx-trigger="click">Profile</a></li>
-                        <li><a class="dropdown-item" hx-target=".content" hx-swap="innerHTML" hx-get="/favorite"
-                                hx-trigger="click">Favorites</a></li>
-                        <li><a class="dropdown-item" hx-get="/to-read" hx-target=".content" hx-swap="innerHTML"
-                                hx-trigger="click">To Read</a></li>
-                        <li><a class="dropdown-item" hx-get="/reading" hx-target=".content" hx.swap="innerHTML"
-                                hx-trigger="click">Reading</a></li>
+                        <li><a class="dropdown-item" hx-get="/my-books" hx-target=".contents" hx-swap="innerHTML"
+                                hx-trigger="click">My Books</a></li>
                         <li><a class="dropdown-item" hx-get="/logout" hx-trigger="click">Log Out</a>
                         </li>
                     </ul>
@@ -63,12 +59,6 @@
                                 document.querySelector('.navbar-brand').innerText = 'Search';
                                 }">
                             Search</button>
-                        <button class="nav-link btn btn-link" id="mybook" hx-push-url="true" hx-get="/my-books"
-                            hx-target=".contents" hx-trigger="click" data-bs-toggle="collapse"
-                            data-bs-target="#navbarNavAltMarkup" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {
-                                document.querySelector('.navbar-brand').innerText = 'My Books';
-                                }">
-                            My Books</button>
                         <button class="nav-link btn btn-link" hx-push-url="true" id="recommend" hx-get="/recommend"
                             hx-target=".contents" hx-trigger="click" data-bs-toggle="collapse"
                             data-bs-target="#navbarNavAltMarkup" hx-swap="innerHTML" hx-on::after-request=" if (event.detail.xhr.status == 200) {

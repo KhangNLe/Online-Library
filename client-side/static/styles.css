@@ -197,12 +197,12 @@ a {
     color: black;
 }
 
-.bookpageContainer {
+.contentContainer {
     display: flex !important;
     width: 100%;
 }
 
-.bookpageLeft {
+.contentLeft {
     position: sticky;
     width: 300px;
     top: 20px;
@@ -210,7 +210,7 @@ a {
     padding: 20px;
 }
 
-.bookpageRight {
+.contentRight {
     margin-left: 150px;
     width: calc(100% - 320px);
     padding: 20px;
@@ -255,7 +255,7 @@ a {
     font-weight: normal;
 }
 
-.bookpageRight .genre {
+.contentRight .genre {
     font-size: 14px;
     padding: 4px;
 }

@@ -289,3 +289,19 @@ a:hover {
 .header-page a:hover {
     background-color: #eceaea;
 }
+
+.book-display {
+    display: flex;
+}
+
+.book-name {
+    display: flex;
+}
+
+.book-display a:hover {
+    background-color: transparent;
+}
+
+.book-title {
+    margin-left: 15px;
+}

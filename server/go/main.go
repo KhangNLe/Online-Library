@@ -182,7 +182,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			log.Println(action)
 			switch action {
 			case "reading":
-				mybook.MyBookPage(c, userId)
+				mybook.MyBookPage(c, db, userId, 1)
 			default:
 				c.Status(http.StatusOK)
 				log.Println("it's working")
@@ -253,6 +253,16 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 			user.AddingToLibrary(userId, c, db, 3)
+		})
+
+		private.GET("/move/:location", func(c *gin.Context) {
+			dst := c.Param("location")
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			mybook.MovingBooks(c, db, dst, userId)
 		})
 	}
 

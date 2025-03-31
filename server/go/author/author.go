@@ -45,15 +45,15 @@ func (ab *AuthorBio) UnmarshalJSON(b []byte) error {
 type Author struct {
 	Key     string    `json:"key"`
 	Bio     AuthorBio `json:"bio"`
-	Name    string    `json:"personal_name"`
 	Birth   string    `json:"birth_date"`
 	Death   string    `json:"death_date"`
 	Links   []Link    `json:"links"`
+	Name    string
 	Photo   string
 	BookKey string
 }
 
-func findAuthor(authorKey, bookKey string, db *sqlx.DB) (Author, error) {
+func findAuthor(authorKey, authorName, bookKey string, db *sqlx.DB) (Author, error) {
 
 	ok, err := isExist(authorKey, db)
 	if err != nil {
@@ -76,6 +76,7 @@ func findAuthor(authorKey, bookKey string, db *sqlx.DB) (Author, error) {
 		photoUrl := "https://covers.openlibrary.org/a/olid/" + key + "-M.jpg"
 		author.Photo = photoUrl
 		author.BookKey = bookKey
+		author.Name = authorName
 
 		err = addAuthorToDB(author, db)
 		if err != nil {
@@ -113,6 +114,7 @@ func addAuthorToDB(author Author, db *sqlx.DB) error {
 	if author.Birth == "" {
 		author.Birth = "Unknown birth date"
 	}
+
 	_, err := db.Exec(`INSERT INTO Author VALUES (?, ?, ?, ?, ?, ?)`,
 		author.Key, author.Name, author.Birth, author.Photo, author.Death, author.Bio.Value)
 
@@ -133,11 +135,6 @@ func addAuthorToDB(author Author, db *sqlx.DB) error {
 		if err != nil {
 			return err
 		}
-	}
-
-	_, err = db.Exec(`INSERT INTO Book VALUES (?, ?)`, author.BookKey, author.Key)
-	if err != nil {
-		return err
 	}
 
 	return nil

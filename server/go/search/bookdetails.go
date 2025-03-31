@@ -202,6 +202,13 @@ func addBookToDB(db *sqlx.DB, book Book) error {
 		}
 	}
 
+	author := "/authors/" + book.AuthorKey
+	_, err = db.Exec(`INSERT INTO Book(book_id, author_id) VALUES (?, ?)`,
+		book.Key, author)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -322,8 +329,8 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                         }"
                                     >Favorite</a></li>
                             </ul>
-                        <div class="responeMessage"></div>
-                        </div>
+                    </div>
+                    <div class="responeMessage"></div>
                     </div>
                 </div>
             </div>
@@ -338,8 +345,9 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                         hx-swap="innerHTML"
                         hx-push-url="/author/%s"
                         hx-vals='{
-                            "key": "/authors/%s",
-                            "bookKey" : "%s"
+                            "key"           : "/authors/%s",
+                            "bookKey"       : "%s",
+                            "authorName"    : "%s"
                                 }'
                         >
                         %s</a></p>
@@ -359,6 +367,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
 		bookDetail.AuthorKey,
 		bookDetail.AuthorKey,
 		bookDetail.Key,
+		bookDetail.Author,
 		bookDetail.Author,
 		html.EscapeString(bookDetail.Description.Value),
 	))

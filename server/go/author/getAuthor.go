@@ -20,6 +20,7 @@ func GetAuthor(c *gin.Context, db *sqlx.DB) {
 		log.Printf("Could not get the info from bookDetail. Error: %s", err)
 		return
 	}
+
 	authorKey, ok := booksVals["key"]
 	if !ok {
 		c.Status(http.StatusInternalServerError)
@@ -34,7 +35,13 @@ func GetAuthor(c *gin.Context, db *sqlx.DB) {
 		return
 	}
 
-	author, err := findAuthor(authorKey, bookKey, db)
+	authorName, ok := booksVals["authorName"]
+	if !ok {
+		c.Status(http.StatusInternalServerError)
+		log.Println("Unable to find authorName")
+	}
+
+	author, err := findAuthor(authorKey, authorName, bookKey, db)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		log.Printf("Error while looking up author. Error: %s", err)

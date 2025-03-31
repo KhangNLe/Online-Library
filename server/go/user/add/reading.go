@@ -23,12 +23,22 @@ func addToReading(c *gin.Context, query *sqlx.Tx, libID int,
 	}
 	defer book.Close()
 
-	if book.Next() {
-		ErrorRespone(c, `
+	for book.Next() {
+		bookId := ""
+		err = book.Scan(&bookId)
+		if err != nil {
+			ErrorRespone(c, ``, http.StatusInternalServerError)
+			log.Printf("Could not scan book_id. Error: %s", err)
+			return err
+		}
+
+		if bookId == bookKey {
+			ErrorRespone(c, `
             The book is already in your Reading session".
             `, http.StatusBadRequest)
-		log.Printf("Error, book is already exist")
-		return errors.New("There is already a book there")
+			log.Printf("Error, book is already exist")
+			return errors.New("There is already a book there")
+		}
 	}
 	_, err = query.Exec(`INSERT INTO Reading (library_id, book_id) VALUES (?, ?)`,
 		libID, bookKey)

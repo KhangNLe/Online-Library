@@ -307,6 +307,20 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                         document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
                                         }"
                                     >Reading</a></li>
+                                <li><a class="dropdown-item" 
+                                    href="#"
+                                    hx-get="/favorite/add"
+                                    hx-target=".responeMessage"
+                                    hx-swap="innerHTML"
+                                    hx-trigger="click"
+                                    hx-vals='{
+                                        "key" : "%s"
+                                        }'
+                                    hx-on::after-request="
+                                        if (event.detail.xhr.status >= 400){
+                                        document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                        }"
+                                    >Favorite</a></li>
                             </ul>
                         <div class="responeMessage"></div>
                         </div>
@@ -337,6 +351,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                     <spane>Genres:</span>
                     <ul class="genreList">
         `, bookDetail.Cover,
+		bookDetail.Key,
 		bookDetail.Key,
 		bookDetail.Key,
 		bookDetail.Key,

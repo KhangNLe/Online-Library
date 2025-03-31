@@ -84,6 +84,11 @@ func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 		}
 	})
 
+	r.GET("/home", func(c *gin.Context) {
+		c.Header("HX-Redirect", "/")
+		c.Status(http.StatusOK)
+	})
+
 	r.GET("/log-in", htmxswap.LoginButton)
 
 	r.GET("/search", func(c *gin.Context) {
@@ -166,13 +171,22 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 	private := r.Group("/")
 	private.Use(loginRequired())
 	{
-		private.GET("/my-books", func(c *gin.Context) {
+		private.GET("/my-books/:action", func(c *gin.Context) {
+			action := c.Param("action")
 			session := sessions.Default(c)
 			userId, ok := session.Get("user_id").(string)
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
-			mybook.MyBookPage(c, userId)
+
+			log.Println(action)
+			switch action {
+			case "reading":
+				mybook.MyBookPage(c, userId)
+			default:
+				c.Status(http.StatusOK)
+				log.Println("it's working")
+			}
 		})
 		private.GET("/user", func(c *gin.Context) {
 
@@ -211,6 +225,14 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 			user.AddingToLibrary(userId, c, db, 69)
+		})
+		private.GET("/favorite/add", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.AddingToLibrary(userId, c, db, 4)
 		})
 		private.GET("/recommend", func(c *gin.Context) {
 		})

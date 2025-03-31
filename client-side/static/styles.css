@@ -210,6 +210,10 @@ a {
     padding: 20px;
 }
 
+.contentLeft a {
+    color: black;
+}
+
 .contentRight {
     margin-left: 150px;
     width: calc(100% - 320px);
@@ -279,5 +283,9 @@ a:hover {
 }
 
 .bookBtn a:hover {
-    background-color: transparent;
+    background-color: #eceaea;
+}
+
+.header-page a:hover {
+    background-color: #eceaea;
 }

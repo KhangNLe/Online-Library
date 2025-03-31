@@ -17,7 +17,8 @@
 <body class="light-theme">
     <header class="web-title">
         <div class="header-page">
-            <h1 hx-get="/" hx-target="body" hx-push-url="true" hx-swap="outerHTML" hx-trigger="click">My Library</h1>
+            <h1 hx-get="/home" hx-target="body" hx-push-url="true" hx-swap="outerHTML" hx-trigger="click">My Library
+            </h1>
             <div>
                 <div class="btn-group" id="user" role="group">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
@@ -25,11 +26,13 @@
                         Account
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" hx-target=".contents" hx-swap="innerHTML" hx-get="/profile"
-                                hx-trigger="click">Profile</a></li>
-                        <li><a class="dropdown-item" hx-get="/my-books" hx-target=".contents" hx-swap="innerHTML"
-                                hx-trigger="click">My Books</a></li>
-                        <li><a class="dropdown-item" hx-get="/logout" hx-trigger="click">Log Out</a>
+                        <li><a class="dropdown-item" href="#" hx-target=".contents" hx-swap="innerHTML"
+                                hx-get="/profile" hx-trigger="click">Profile</a></li>
+                        <li><a class="dropdown-item" href="#" hx-get="/my-books/reading" hx-target=".contents"
+                                hx-swap="innerHTML" hx-push-url="true" hx-trigger="click" hx-on::after-Request="if (event.detail.xhr.status == 200) {
+                                    document.querySelector('.navbar-brand').innerText = 'My books';
+                                }">My Books</a></li>
+                        <li><a class="dropdown-item" href="#" hx-get="/logout" hx-trigger="click">Log Out</a>
                         </li>
                     </ul>
                 </div>

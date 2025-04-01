@@ -9,17 +9,17 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func MoveToFinishReading(c *gin.Context, query *sqlx.Tx,
-	from, dst, bookKey string, libId int) error {
+func moveToFinishReading(c *gin.Context, query *sqlx.Tx,
+	from, bookKey string, libId int) error {
 
 	var err error
 	switch from {
 	case "reading":
 		_, err = query.Exec(`DELETE FROM Reading 
-            WHERE book_id = ?`, bookKey)
+            WHERE book_id = ? AND library_id = ?`, bookKey, libId)
 	case "toread":
 		_, err = query.Exec(`DELETE FROM Planning_to_Read 
-            WHERE book_id = ?`, bookKey)
+            WHERE book_id = ? AND library_id = ?`, bookKey, libId)
 	default:
 		err = errors.New("Could not find the proper from location")
 	}

@@ -143,7 +143,7 @@ func currentlyReading(c *gin.Context, query *sqlx.Tx,
                                     >Move to Plan to Read</a></li>
                                 <li><a class="dropdown-item" 
                                     href="#"
-                                    hx-get="/move/favorite"
+                                    hx-get="/move/drop"
                                     hx-target=".responeMessage"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"

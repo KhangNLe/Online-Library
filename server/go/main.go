@@ -4,9 +4,9 @@ import (
 	"book/author"
 	"book/htmxSwap"
 	"book/login-signup"
+	"book/mybook"
 	"book/search"
 	"book/user/add"
-	"book/user/mybook"
 	"log"
 	"net/http"
 	"os"
@@ -263,6 +263,8 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 			mybook.MovingBooks(c, db, dst, userId)
+			c.Header("HX-Redirect", "/my-books/reading")
+			c.Status(http.StatusOK)
 		})
 	}
 

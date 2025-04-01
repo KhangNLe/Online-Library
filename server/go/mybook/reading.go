@@ -91,21 +91,17 @@ func currentlyReading(c *gin.Context, query *sqlx.Tx,
                 <td class="actions">
                     <div class="btn-group" role="group"
                         style="max-height: 50px; max-width: 90%%; margin-left: -15px;">
-                        <button type="button" class="btn btn-success"
+                        <button type="button" class="btn btn-success firstOption"
                             style="width: 125px;">
                             <a hx-get="/move/finish"
-                            hx-target=".responeMessage"
+                            hx-target=".myBookList"
                             hx-swap="innerHTML"
                             hx-vals='{
                                 "key"   : "%s",
                                 "from"  : "%s"
                                 }'
-                            hx-on::after-request="
-                                if (event.detail.xhr.status >= 400){
-                                    document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
-                                }"
                             style="font-size: 13px;"
-                            >Move to Read</a>
+                            >Finish Book</a>
                         </button>
                         <div class="dropdown bookBtn btn-group"
                             style="width: 5px;">
@@ -118,7 +114,7 @@ func currentlyReading(c *gin.Context, query *sqlx.Tx,
                                 <li><a class="dropdown-item"
                                     href="#"
                                     hx-get="/move/favorite"
-                                    hx-target=".repsoneMessage"
+                                    hx-target=".contents"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
@@ -129,7 +125,7 @@ func currentlyReading(c *gin.Context, query *sqlx.Tx,
                                 <li><a class="dropdown-item" 
                                     href="#"
                                     hx-get="/move/toread"
-                                    hx-target=".responeMessage"
+                                    hx-target=".myBookList"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
@@ -144,7 +140,7 @@ func currentlyReading(c *gin.Context, query *sqlx.Tx,
                                 <li><a class="dropdown-item" 
                                     href="#"
                                     hx-get="/move/drop"
-                                    hx-target=".responeMessage"
+                                    hx-target=".contents"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{

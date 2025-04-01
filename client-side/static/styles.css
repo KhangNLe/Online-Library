@@ -305,3 +305,7 @@ a:hover {
 .book-title {
     margin-left: 15px;
 }
+
+.firstOption a:hover {
+    background-color: transparent;
+}

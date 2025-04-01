@@ -16,6 +16,6 @@ func moveToFavorite(c *gin.Context, query *sqlx.Tx,
 		log.Printf("Unable to insert book into favorite. Error: %s", err)
 		return err
 	}
-
+	log.Println("Added to favorite, waiting to commit")
 	return nil
 }

@@ -99,6 +99,7 @@ func AddingToLibrary(userId string, c *gin.Context, db *sqlx.DB, optinon int) {
 	}
 
 	if err != nil {
+		log.Printf("Error happened when tried to add book. Error: %s", err)
 		return
 	}
 

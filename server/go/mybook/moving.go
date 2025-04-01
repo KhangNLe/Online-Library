@@ -39,7 +39,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
 		return
 	}
 
-	bookKey, ok := bookVals["bookKey"]
+	bookKey, ok := bookVals["key"]
 	if !ok {
 		ErrorRespone(c, `
             We could not perform this action at this moment. Please try again later.
@@ -105,6 +105,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
 	}
 
 	if err != nil {
+		log.Printf("Error happened. Error: %s", err)
 		return
 	}
 

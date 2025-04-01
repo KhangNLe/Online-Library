@@ -48,22 +48,8 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
 		return
 	}
 
-	query, err := db.Beginx()
-	if err != nil {
-		ErrorRespone(c, `
-            We could not perform this action at this moment. Please try again later.
-            `, http.StatusInternalServerError)
-		log.Printf("Error while transfer it to sqlx.Tx. Error: %s", err)
-		return
-	}
-	defer func() {
-		if err != nil {
-			query.Rollback()
-		}
-	}()
-
-	resp, err := query.Query(`SELECT library_id FROM User_library
-            WHERE user_id = ?`, userId)
+	resp, err := db.Query(`SELECT library_id FROM User_library
+        WHERE user_id = ?`, userId)
 	if err != nil {
 		ErrorRespone(c, `
             We could not perform this action at this moment. Please try again later.
@@ -91,6 +77,20 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
 		return
 	}
 
+	query, err := db.Beginx()
+	if err != nil {
+		ErrorRespone(c, `
+            We could not perform this action at this moment. Please try again later.
+            `, http.StatusInternalServerError)
+		log.Printf("Error while transfer it to sqlx.Tx. Error: %s", err)
+		return
+	}
+	defer func() {
+		if err != nil {
+			query.Rollback()
+		}
+	}()
+
 	switch dst {
 	case "finish":
 		err = moveToFinishReading(c, query, from, bookKey, lib_id)
@@ -100,6 +100,8 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
 		err = moveToToRead(c, query, from, bookKey, lib_id)
 	case "drop":
 		err = dropBook(c, query, from, bookKey, lib_id)
+	case "reading":
+		err = moveBookToReading(c, query, lib_id, bookKey, from)
 	default:
 		err = errors.New("Destination did not match any option")
 	}
@@ -108,7 +110,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
 		log.Printf("Error happened. Error: %s", err)
 		return
 	}
-
+	log.Println("Waiting for commit")
 	err = query.Commit()
 	if err != nil {
 		ErrorRespone(c, `

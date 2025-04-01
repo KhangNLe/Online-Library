@@ -1,13 +1,15 @@
 package user
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
-	"strconv"
 )
 
 func AddingToLibrary(userId string, c *gin.Context, db *sqlx.DB, optinon int) {
@@ -92,10 +94,14 @@ func AddingToLibrary(userId string, c *gin.Context, db *sqlx.DB, optinon int) {
 		err = addToFavoriteBook(c, query, libID, key)
 		libSesh = "Favorite Book"
 		bookOrAuthor = "book"
-	default:
+	case 69:
 		err = addToAlreadyRead(c, query, libID, key, num)
 		libSesh = "Already Read"
 		bookOrAuthor = "book"
+	default:
+		err = errors.New(fmt.Sprintf(`
+            The %d not match any of the option.
+        `, optinon))
 	}
 
 	if err != nil {

@@ -23,12 +23,26 @@ func addToAlreadyRead(c *gin.Context, query *sqlx.Tx,
 	}
 	defer book.Close()
 
-	if book.Next() {
-		ErrorRespone(c, `
+	for book.Next() {
+		book_id := ""
+		err = book.Scan(&book_id)
+
+		if err != nil {
+			ErrorRespone(c, `
+                We could not perform this action at the moment. 
+                Please try again later.
+                `, http.StatusBadRequest)
+			log.Printf("Error while try to scan for book_id. Error: %s", err)
+			return err
+		}
+
+		if book_id == bookKey {
+			ErrorRespone(c, `
             The book is already in your Read session.
             `, http.StatusBadRequest)
-		log.Printf("Error, book is already exist")
-		return errors.New("Book already exist")
+			log.Printf("Error, book is already exist")
+			return errors.New("Book already exist")
+		}
 	}
 	_, err = query.Exec(`INSERT INTO Read_Book (library_id, book_id) VALUES (?, ?)`,
 		libID, bookKey)
@@ -37,5 +51,6 @@ func addToAlreadyRead(c *gin.Context, query *sqlx.Tx,
 		log.Printf("Could not add book into the Read_Book db. Error: %s", err)
 		return err
 	}
+
 	return nil
 }

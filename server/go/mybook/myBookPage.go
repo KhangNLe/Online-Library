@@ -1,6 +1,7 @@
 package mybook
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func MyBookPage(c *gin.Context, db *sqlx.DB, user string, option int) {
+func MyBookPage(c *gin.Context, db *sqlx.DB, user string, dst string) {
 	userId, err := strconv.Atoi(user)
 	if err != nil {
 		ErrorRespone(c, `
@@ -21,19 +22,7 @@ func MyBookPage(c *gin.Context, db *sqlx.DB, user string, option int) {
 		return
 	}
 
-	query, err := db.Beginx()
-	if err != nil {
-		ErrorRespone(c, ``, http.StatusInternalServerError)
-		log.Printf("Could not start sqlx.Tx. Error: %s", err)
-		return
-	}
-	defer func() {
-		if err != nil {
-			query.Rollback()
-		}
-	}()
-
-	resp, err := query.Query(`SELECT library_id FROM User_library WHERE
+	resp, err := db.Query(`SELECT library_id FROM User_library WHERE
                 user_id = ?`, userId)
 	if err != nil {
 		ErrorRespone(c, `
@@ -64,9 +53,18 @@ func MyBookPage(c *gin.Context, db *sqlx.DB, user string, option int) {
 
 	var myPage []string
 
-	switch option {
-	case 1:
-		err = currentlyReading(c, query, libId, &myPage)
+	switch dst {
+	case "reading":
+		err = currentlyReading(c, db, libId, &myPage)
+	case "favorites":
+		err = getFavoriteBook(c, db, libId, &myPage)
+	case "wantToRead":
+		err = getToReadBooks(c, db, libId, &myPage)
+	case "alreadyRead":
+		err = getMyReadBook(c, db, libId, &myPage)
+	default:
+		err = errors.New(
+			fmt.Sprintf("Could not find any matching option with %s", dst))
 	}
 
 	if err != nil {
@@ -88,4 +86,92 @@ func ErrorRespone(c *gin.Context, msg string, status int) {
         %s
         </p></br>
         `, msg))
+}
+
+func loadOptions(myPage *[]string) {
+	*myPage = append(*myPage, fmt.Sprint(`
+        <div class="contentContainer">
+        <div class="contentLeft border rounded p-3 bg-light" 
+            style="max-width: 250px; max-height: 250px; margin-top: 19px;">
+            <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+                <a class="nav-link reading active" 
+                href="#"
+                hx-get="/my-books/reading"
+                hx-push-url="true"
+                hx-trigger="click"
+                hx-target=".contents"
+                hx-trigger="click"
+                hx-on::after-request= "
+                    if (event.detail.xhr.status == 200) {
+                        document.querySelectorAll('.nav-link').forEach(elmt => {
+                            elmt.classList.remove('active');
+                        });
+                        document.querySelector('.reading').classList.add('active');
+                    }
+                "
+                >Reading</a></li>
+            <li class="nav-item">
+                <a class="nav-link already" 
+                href="#"
+                hx-get="/my-books/alreadyRead"
+                hx-target=".myBookList"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                hx-trigger="click"
+                hx-on::after-Request= "
+                    if (event.detail.xhr.status == 200) {
+                        document.querySelectorAll('.nav-link').forEach(elmt => {
+                            elmt.classList.remove('active');
+                        });
+                        document.querySelector('.already').classList.add('active');
+                    }
+                "
+                >Already Read</a></li>
+            <li class="nav-item">
+                <a class="nav-link planning" 
+                href="#"
+                hx-get="/my-books/wantToRead"
+                hx-target=".myBookList"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                hx-trigger="click"
+                hx-on::after-Request= "
+                    if (event.detail.xhr.status == 200) {
+                        document.querySelectorAll('.nav-link').forEach(elmt => {
+                            elmt.classList.remove('active');
+                        });
+                        document.querySelector('.planning').classList.add('active');
+                    }
+                "
+            >Planning to Read</a></li>
+            <li class="nav-item">
+                <a class="nav-link favorite" 
+                href="#" 
+                hx-get="/my-books/favorites"
+                hx-target=".myBookList"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                hx-trigger="click"
+                hx-on::after-Request= "
+                    if (event.detail.xhr.status == 200) {
+                        document.querySelectorAll('.nav-link').forEach(elmt => {
+                            elmt.classList.remove('active');
+                        });
+                        document.querySelector('.favorite').classList.add('active');
+                    }
+                "
+            >Favorites</a></li>
+            </ul>
+            </div>
+        <div class="contentRight" style="margin-left: auto;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody class="myBookList">
+    `))
 }

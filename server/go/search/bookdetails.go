@@ -289,7 +289,7 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                 <li><a class="dropdown-item"
                                     href="#"
                                     hx-get="/alreadyRead/add"
-                                    hx-target=".repsoneMessage"
+                                    hx-target=".responeMessage"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
@@ -330,8 +330,8 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                                     >Favorite</a></li>
                             </ul>
                     </div>
-                    <div class="responeMessage"></div>
-                    </div>
+                </div>
+                <div class="responeMessage"></div>
                 </div>
             </div>
             <div class="contentRight">

@@ -23,7 +23,7 @@ const (
 	projectPath = "Desktop/Projects/HTML/OnlineLibrary"
 	clientPath  = "client-side"
 	serverPath  = "server"
-	dbName      = "library.db"
+	dbName      = "library.db?_journal_mode=WAL&_sync=NORMAL&_busy_timeout=500"
 )
 
 func main() {
@@ -180,13 +180,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			}
 
 			log.Println(action)
-			switch action {
-			case "reading":
-				mybook.MyBookPage(c, db, userId, 1)
-			default:
-				c.Status(http.StatusOK)
-				log.Println("it's working")
-			}
+			mybook.MyBookPage(c, db, userId, action)
 		})
 		private.GET("/user", func(c *gin.Context) {
 

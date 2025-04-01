@@ -9,42 +9,44 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func currentlyReading(c *gin.Context, query *sqlx.DB,
-	libId int, myBooksPage *[]string) error {
+func getMyReadBook(c *gin.Context, query *sqlx.DB, libId int,
+	myPage *[]string) error {
 
-	loadOptions(myBooksPage)
-	resp, err := query.Query(`SELECT Bd.title, Bd.book_id, 
-                        Bd.cover_img, A.name, A.author_id
-                        FROM Book B JOIN Author A ON B.author_id = A.author_id
-                        JOIN Book_Detail Bd ON B.book_id = Bd.book_id
-                        WHERE B.book_id
-                        IN (SELECT book_id FROM Reading WHERE library_id = ?)`,
-		libId)
+	resp, err := query.Query(`SELECT Bd.book_id, Bd.title, Bd.cover_img, 
+        A.author_id, A.name
+        FROM Book B JOIN Author A ON B.author_id = A.author_id 
+        JOIN Book_Detail Bd ON B.book_id = Bd.book_id 
+        WHERE B.book_id IN (
+            SELECT book_id FROM Read_Book
+            WHERE library_id = ?)`, libId)
+
 	if err != nil {
 		ErrorRespone(c, `
-            We could not perform this action that this moment. Please try again later.
-            `, http.StatusInternalServerError)
-		log.Printf("Could not get books from Book_detail. Error: %s", err)
+            We could not perform this action at the moment.
+            Please try again later.
+            `, http.StatusBadRequest)
+		log.Printf("Could not look up book items in Read_book. Error: %s", err)
 		return err
 	}
 	defer resp.Close()
 
 	for resp.Next() {
+		book_id := ""
 		title := ""
-		bookKey := ""
 		img := ""
-		authorName := ""
-		authorKey := ""
-		err = resp.Scan(&title, &bookKey, &img, &authorName, &authorKey)
+		author_id := ""
+		name := ""
+
+		err = resp.Scan(&book_id, &title, &img, &author_id, &name)
 		if err != nil {
 			ErrorRespone(c, `
-                We could not perform this action at this moment. Please try again later.
-                `, http.StatusInternalServerError)
-			log.Printf("Could not scan for info in the query. Error: %s", err)
+                We could not perform this action at the moment.
+                Please try again later
+                `, http.StatusBadRequest)
+			log.Printf("Could not scan for items. Error: %s", err)
 			return err
 		}
-
-		*myBooksPage = append(*myBooksPage, fmt.Sprintf(`
+		*myPage = append(*myPage, fmt.Sprintf(`
             <tr>
                 <td class="book-display">
                     <div class="book-name">
@@ -93,15 +95,15 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                         style="max-height: 50px; max-width: 90%%; margin-left: -15px;">
                         <button type="button" class="btn btn-success firstOption"
                             style="width: 125px;">
-                            <a hx-get="/move/finish"
-                            hx-target=".myBookList"
+                            <a hx-get="/move/reading"
+                            hx-target=".contents"
                             hx-swap="innerHTML"
                             hx-vals='{
                                 "key"   : "%s",
                                 "from"  : "%s"
                                 }'
                             style="font-size: 13px;"
-                            >Finish Book</a>
+                            >Reading</a>
                         </button>
                         <div class="dropdown bookBtn btn-group"
                             style="width: 5px;">
@@ -121,22 +123,11 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                                         "key"   : "%s",
                                         "from"  : "%s"
                                         }'
-                                    >Move to Favorite</a></li>
-                                <li><a class="dropdown-item" 
-                                    href="#"
-                                    hx-get="/move/toread"
-                                    hx-target=".contents"
-                                    hx-swap="innerHTML"
-                                    hx-trigger="click"
-                                    hx-vals='{
-                                        "key"   : "%s",
-                                        "from"  : "%s"
-                                        }'
-                                    hx-on::after-request="
-                                        if (event.detail.xhr.status >= 400){
-                                        document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                        hx-on::after-request="
+                                            if (event.detail.xhr.status >= 400){
+                                            document.querySelector('.myBookList').innerHTML = event.detail.xhr.responseText;
                                         }"
-                                    >Move to Plan to Read</a></li>
+                                    >Move to Favorite</a></li>
                                 <li><a class="dropdown-item" 
                                     href="#"
                                     hx-get="/move/drop"
@@ -149,21 +140,21 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                                         }'
                                     hx-on::after-request="
                                         if (event.detail.xhr.status >= 400){
-                                        document.querySelector('.responeMessage').innerHTML = event.detail.xhr.responseText;
+                                        document.querySelector('.myBookList').innerHTML = event.detail.xhr.responseText;
                                         }"
                                     >Drop Book</a></li>
                             </ul>
                     </div>
                 </td>
             </tr>
-            `, bookKey, authorName, authorKey, img, img,
-			bookKey, authorName, authorKey, img, title,
-			authorKey, bookKey, authorName, authorName,
-			bookKey, "reading", bookKey, "reading",
-			bookKey, "reading", bookKey, "reading"))
+        `, book_id, name, author_id, img, img,
+			book_id, name, author_id, img, title,
+			author_id, book_id, name, name,
+			book_id, "read", book_id, "read",
+			book_id, "read"))
 	}
 
-	*myBooksPage = append(*myBooksPage, `
+	*myPage = append(*myPage, `
         </tbody>
         </table>
         </div>

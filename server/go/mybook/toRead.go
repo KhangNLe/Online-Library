@@ -88,8 +88,8 @@ func getToReadBooks(c *gin.Context, query *sqlx.DB, libId int,
                         style="max-height: 50px; max-width: 90%%; margin-left: -15px;">
                         <button type="button" class="btn btn-success firstOption"
                             style="width: 125px;">
-                            <a hx-get="/move/reading"
-                            hx-target=".contents"
+                            <a hx-post="/my-books/reading"
+                            hx-target=".myBookList"
                             hx-swap="innerHTML"
                             hx-vals='{
                                 "key"   : "%s",
@@ -108,8 +108,8 @@ func getToReadBooks(c *gin.Context, query *sqlx.DB, libId int,
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item"
                                     href="#"
-                                    hx-get="/move/favorite"
-                                    hx-target=".contents"
+                                    hx-post="/my-books/favorite"
+                                    hx-target=".myBookList"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
@@ -123,8 +123,8 @@ func getToReadBooks(c *gin.Context, query *sqlx.DB, libId int,
                                     >Move to Favorite</a></li>
                                 <li><a class="dropdown-item" 
                                     href="#"
-                                    hx-get="/move/drop"
-                                    hx-target=".contents"
+                                    hx-post="/my-books/drop"
+                                    hx-target=".myBookList"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{

@@ -83,11 +83,11 @@ func getFavoriteBook(c *gin.Context, query *sqlx.DB,
                 </td>
                 <td class="actions">
                     <div class="btn-group" role="group"
-                        style="max-height: 50px; max-width: 90%%; margin-left: -15px;">
+                        style="max-height: 50px; max-width: 90%%;">
                         <button type="button" class="btn btn-success firstOption"
                             style="width: 125px;">
-                            <a hx-get="/move/favorite"
-                            hx-target=".contents"
+                            <a hx-post="/my-books/favorite"
+                            hx-target=".myBookList"
                             hx-swap="innerHTML"
                             hx-vals='{
                                 "key"   : "%s",

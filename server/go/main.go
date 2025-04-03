@@ -171,6 +171,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 	private := r.Group("/")
 	private.Use(loginRequired())
 	{
+
 		private.GET("/my-books/:action", func(c *gin.Context) {
 			action := c.Param("action")
 			session := sessions.Default(c)
@@ -178,10 +179,24 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
-
 			log.Println(action)
 			mybook.MyBookPage(c, db, userId, action)
 		})
+
+		private.POST("/my-books/:location", func(c *gin.Context) {
+			dst := c.Param("location")
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			from, err := mybook.MovingBooks(c, db, dst, userId)
+			log.Println(from)
+			if err == nil {
+				mybook.MyBookPage(c, db, userId, from)
+			}
+		})
+
 		private.GET("/user", func(c *gin.Context) {
 
 		})
@@ -228,6 +243,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			}
 			user.AddingToLibrary(userId, c, db, 4)
 		})
+
 		private.GET("/recommend", func(c *gin.Context) {
 		})
 
@@ -247,18 +263,6 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 			user.AddingToLibrary(userId, c, db, 3)
-		})
-
-		private.GET("/move/:location", func(c *gin.Context) {
-			dst := c.Param("location")
-			session := sessions.Default(c)
-			userId, ok := session.Get("user_id").(string)
-			if !ok {
-				c.AbortWithStatus(http.StatusInternalServerError)
-			}
-			mybook.MovingBooks(c, db, dst, userId)
-			c.Header("HX-Redirect", "/my-books/reading")
-			c.Status(http.StatusOK)
 		})
 	}
 

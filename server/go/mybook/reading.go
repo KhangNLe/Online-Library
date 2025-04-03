@@ -93,7 +93,7 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                         style="max-height: 50px; max-width: 90%%; margin-left: -15px;">
                         <button type="button" class="btn btn-success firstOption"
                             style="width: 125px;">
-                            <a hx-get="/move/finish"
+                            <a hx-post="/move/finish"
                             hx-target=".myBookList"
                             hx-swap="innerHTML"
                             hx-vals='{
@@ -113,8 +113,8 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item"
                                     href="#"
-                                    hx-get="/move/favorite"
-                                    hx-target=".contents"
+                                    hx-post="/my-books/favorite"
+                                    hx-target=".myBookList"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
@@ -124,9 +124,8 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                                     >Move to Favorite</a></li>
                                 <li><a class="dropdown-item" 
                                     href="#"
-                                    hx-get="/move/toread"
-                                    hx-target=".contents"
-                                    hx-swap="innerHTML"
+                                    hx-target=".myBookList"
+                                    hx-post="/my-books/toread"
                                     hx-trigger="click"
                                     hx-vals='{
                                         "key"   : "%s",
@@ -139,8 +138,8 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                                     >Move to Plan to Read</a></li>
                                 <li><a class="dropdown-item" 
                                     href="#"
-                                    hx-get="/move/drop"
-                                    hx-target=".contents"
+                                    hx-post="/my-books/drop"
+                                    hx-target=".myBookList"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{

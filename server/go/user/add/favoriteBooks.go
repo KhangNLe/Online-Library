@@ -38,5 +38,14 @@ func addToFavoriteBook(c *gin.Context, query *sqlx.Tx, libId int, bookKey string
 			return errors.New("Book is already in the Favorite book.")
 		}
 	}
+
+	_, err = query.Exec(`INSERT INTO Favorite_Book (book_id, library_id) 
+        VALUES (?, ?)`, bookKey, libId)
+	if err != nil {
+		ErrorRespone(c, `
+            We could not perform this action at the moment.
+            Please try later.
+            `, http.StatusBadRequest)
+	}
 	return nil
 }

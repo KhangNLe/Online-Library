@@ -2,6 +2,7 @@ package mybook
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,7 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
+func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) (string, error) {
 	userId, err := strconv.Atoi(user)
 	if err != nil {
 		ErrorRespone(c, `
@@ -27,7 +28,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusBadRequest)
 		log.Printf("Could not get the value from action. Error: %s", err)
-		return
+		return "", err
 	}
 
 	from, ok := bookVals["from"]
@@ -36,7 +37,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusInternalServerError)
 		log.Println("Could not find 'from' in hx-vals")
-		return
+		return "", err
 	}
 
 	bookKey, ok := bookVals["key"]
@@ -45,7 +46,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusInternalServerError)
 		log.Println("Could not find book_key in hx-vals")
-		return
+		return "", err
 	}
 
 	resp, err := db.Query(`SELECT library_id FROM User_library
@@ -55,7 +56,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusBadRequest)
 		log.Printf("Error requesting library_id. Error: %s", err)
-		return
+		return "", err
 	}
 	defer resp.Close()
 
@@ -65,7 +66,9 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusBadRequest)
 		log.Printf("Could not find library_id for user_id: %s", user)
-		return
+		return "", errors.New(fmt.Sprintf(`
+            Coulw not find library_id for user_id: %s
+            `, user))
 	}
 
 	err = resp.Scan(&lib_id)
@@ -74,7 +77,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusInternalServerError)
 		log.Printf("Could not scan for library_id. Error: %s", err)
-		return
+		return "", err
 	}
 
 	query, err := db.Beginx()
@@ -83,7 +86,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusInternalServerError)
 		log.Printf("Error while transfer it to sqlx.Tx. Error: %s", err)
-		return
+		return "", err
 	}
 	defer func() {
 		if err != nil {
@@ -108,7 +111,7 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
 
 	if err != nil {
 		log.Printf("Error happened. Error: %s", err)
-		return
+		return "", err
 	}
 	log.Println("Waiting for commit")
 	err = query.Commit()
@@ -117,6 +120,8 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) {
             We could not perform this action at this moment. Please try again later.
             `, http.StatusInternalServerError)
 		log.Printf("Could not commit the database change. Error: %s", err)
-		return
+		return "", err
 	}
+
+	return from, nil
 }

@@ -58,9 +58,9 @@ func MyBookPage(c *gin.Context, db *sqlx.DB, user string, dst string) {
 		err = currentlyReading(c, db, libId, &myPage)
 	case "favorites":
 		err = getFavoriteBook(c, db, libId, &myPage)
-	case "wantToRead":
+	case "toread":
 		err = getToReadBooks(c, db, libId, &myPage)
-	case "alreadyRead":
+	case "finish":
 		err = getMyReadBook(c, db, libId, &myPage)
 	default:
 		err = errors.New(
@@ -114,7 +114,7 @@ func loadOptions(myPage *[]string) {
             <li class="nav-item">
                 <a class="nav-link already" 
                 href="#"
-                hx-get="/my-books/alreadyRead"
+                hx-get="/my-books/finish"
                 hx-target=".myBookList"
                 hx-swap="innerHTML"
                 hx-push-url="true"
@@ -131,7 +131,7 @@ func loadOptions(myPage *[]string) {
             <li class="nav-item">
                 <a class="nav-link planning" 
                 href="#"
-                hx-get="/my-books/wantToRead"
+                hx-get="/my-books/toread"
                 hx-target=".myBookList"
                 hx-swap="innerHTML"
                 hx-push-url="true"

@@ -304,6 +304,8 @@ a:hover {
 
 .book-title {
     margin-left: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .firstOption a:hover {

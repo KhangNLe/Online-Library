@@ -266,7 +266,8 @@ func PrintBookDetail(bookDetail Book, c *gin.Context) {
                         style="max-height: 60px; margin-left: -12%% ;">
                         <button type="button" class="btn btn-success"
                             style="width: 250px;">
-                            <a hx-get="/wantToRead/add"
+                            <a id="firstBookButton"
+                            hx-get="/wantToRead/add"
                             hx-target=".responeMessage"
                             hx-swap="innerHTML"
                             hx-vals='{

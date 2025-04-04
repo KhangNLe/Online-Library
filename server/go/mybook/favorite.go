@@ -86,7 +86,7 @@ func getFavoriteBook(c *gin.Context, query *sqlx.DB,
                         style="max-height: 50px; max-width: 90%%;">
                         <button type="button" class="btn btn-success firstOption"
                             style="width: 125px;">
-                            <a hx-post="/my-books/favorite"
+                            <a hx-post="/my-books/drop"
                             hx-target=".myBookList"
                             hx-swap="innerHTML"
                             hx-vals='{
@@ -101,7 +101,7 @@ func getFavoriteBook(c *gin.Context, query *sqlx.DB,
             `, bookKey, name, author_id, img, img,
 			bookKey, author_id, author_id, img, title,
 			author_id, bookKey, author_id, name,
-			bookKey, "favorite"))
+			bookKey, "favorites"))
 	}
 
 	*myPage = append(*myPage, `

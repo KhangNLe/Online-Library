@@ -5,6 +5,7 @@ import (
 	"book/htmxSwap"
 	"book/login-signup"
 	"book/mybook"
+	"book/recomend"
 	"book/search"
 	"book/user/add"
 	"log"
@@ -216,35 +217,47 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			userId, ok := session.Get("user_id").(string)
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
+			} else {
+				user.AddingToLibrary(userId, c, db, 0)
 			}
-			user.AddingToLibrary(userId, c, db, 0)
 		})
 		private.GET("/reading/add", func(c *gin.Context) {
 			session := sessions.Default(c)
 			userId, ok := session.Get("user_id").(string)
 			if !ok {
 				c.AbortWithStatus(http.StatusBadRequest)
+			} else {
+				user.AddingToLibrary(userId, c, db, 1)
 			}
-			user.AddingToLibrary(userId, c, db, 1)
 		})
 		private.GET("/alreadyRead/add", func(c *gin.Context) {
 			session := sessions.Default(c)
 			userId, ok := session.Get("user_id").(string)
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
+			} else {
+				user.AddingToLibrary(userId, c, db, 69)
 			}
-			user.AddingToLibrary(userId, c, db, 69)
 		})
 		private.GET("/favorite/add", func(c *gin.Context) {
 			session := sessions.Default(c)
 			userId, ok := session.Get("user_id").(string)
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
+			} else {
+				user.AddingToLibrary(userId, c, db, 4)
 			}
-			user.AddingToLibrary(userId, c, db, 4)
 		})
 
 		private.GET("/recommend", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+				log.Println("Could not find user_id in session")
+			} else {
+				recomend.GetRecoommend(c, db, userId)
+			}
 		})
 
 		private.GET("/favorite-author/add", func(c *gin.Context) {
@@ -252,8 +265,9 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			userId, ok := session.Get("user_id").(string)
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
+			} else {
+				user.AddingToLibrary(userId, c, db, 2)
 			}
-			user.AddingToLibrary(userId, c, db, 2)
 		})
 
 		private.GET("/block-author/add", func(c *gin.Context) {
@@ -261,8 +275,9 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			userId, ok := session.Get("user_id").(string)
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
+			} else {
+				user.AddingToLibrary(userId, c, db, 3)
 			}
-			user.AddingToLibrary(userId, c, db, 3)
 		})
 	}
 

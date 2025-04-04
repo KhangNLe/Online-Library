@@ -311,3 +311,7 @@ a:hover {
 .firstOption a:hover {
     background-color: transparent;
 }
+
+#firstBookButton:hover{
+    background-color: transparent;
+}

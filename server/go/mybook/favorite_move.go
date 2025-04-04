@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func moveToFavorite(c *gin.Context, query *sqlx.Tx,
+func moveToFavorite(c *gin.Context, query *sqlx.Tx, from string,
 	bookKey string, libId int) error {
 	_, err := query.Exec(`INSERT INTO Favorite_Book (book_id, library_id)
         VALUES (?, ?)`, bookKey, libId)

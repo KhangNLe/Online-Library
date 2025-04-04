@@ -93,8 +93,8 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                         style="max-height: 50px; max-width: 90%%; margin-left: -15px;">
                         <button type="button" class="btn btn-success firstOption"
                             style="width: 125px;">
-                            <a hx-post="/move/finish"
-                            hx-target=".myBookList"
+                            <a hx-post="/my-books/finish"
+                            hx-target=".contents"
                             hx-swap="innerHTML"
                             hx-vals='{
                                 "key"   : "%s",
@@ -114,7 +114,7 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                                 <li><a class="dropdown-item"
                                     href="#"
                                     hx-post="/my-books/favorite"
-                                    hx-target=".myBookList"
+                                    hx-target=".contents"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{
@@ -124,7 +124,8 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                                     >Move to Favorite</a></li>
                                 <li><a class="dropdown-item" 
                                     href="#"
-                                    hx-target=".myBookList"
+                                    hx-target=".contents"
+                                    hx-swap="innerHTML"
                                     hx-post="/my-books/toread"
                                     hx-trigger="click"
                                     hx-vals='{
@@ -139,7 +140,7 @@ func currentlyReading(c *gin.Context, query *sqlx.DB,
                                 <li><a class="dropdown-item" 
                                     href="#"
                                     hx-post="/my-books/drop"
-                                    hx-target=".myBookList"
+                                    hx-target=".contents"
                                     hx-swap="innerHTML"
                                     hx-trigger="click"
                                     hx-vals='{

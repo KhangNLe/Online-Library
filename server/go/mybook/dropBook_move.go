@@ -20,7 +20,7 @@ func dropBook(c *gin.Context, query *sqlx.Tx,
 	case "toread":
 		_, err = query.Exec(`DELETE FROM Planning_to_Read 
                 WHERE library_id = ? AND book_id = ?`, libId, bookKey)
-	case "favorite":
+	case "favorites":
 		_, err = query.Exec(`DELETE FROM Favorite_Book 
             WHERE library_id = ? AND book_id = ?`, libId, bookKey)
 	case "finish":

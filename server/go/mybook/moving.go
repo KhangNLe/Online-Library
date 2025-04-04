@@ -98,13 +98,13 @@ func MovingBooks(c *gin.Context, db *sqlx.DB, dst string, user string) (string, 
 	case "finish":
 		err = moveToFinishReading(c, query, from, bookKey, lib_id)
 	case "favorite":
-		err = moveToFavorite(c, query, bookKey, lib_id)
+		err = moveToFavorite(c, query, from, bookKey, lib_id)
 	case "toread":
 		err = moveToToRead(c, query, from, bookKey, lib_id)
 	case "drop":
 		err = dropBook(c, query, from, bookKey, lib_id)
 	case "reading":
-		err = moveBookToReading(c, query, lib_id, bookKey, from)
+		err = moveBookToReading(c, query, from, bookKey, lib_id)
 	default:
 		err = errors.New("Destination did not match any option")
 	}

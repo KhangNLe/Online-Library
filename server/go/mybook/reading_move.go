@@ -10,8 +10,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func moveBookToReading(c *gin.Context, query *sqlx.Tx, libId int,
-	bookKey, from string) error {
+func moveBookToReading(c *gin.Context, query *sqlx.Tx,
+	from, bookKey string, libId int) error {
 
 	var err error
 	switch from {

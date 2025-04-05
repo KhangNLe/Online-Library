@@ -4,10 +4,11 @@ import (
 	"book/author"
 	"book/htmxSwap"
 	"book/login-signup"
+	"book/move"
 	"book/mybook"
 	"book/recomend"
 	"book/search"
-	"book/user/add"
+	"book/user"
 	"log"
 	"net/http"
 	"os"
@@ -198,9 +199,15 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			}
 		})
 
-		private.GET("/user", func(c *gin.Context) {
-
+		private.GET("/profile", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+			user.UserProfile(c, db, userId)
 		})
+
 		private.GET("/logout", func(c *gin.Context) {
 			session := sessions.Default(c)
 			session.Delete("user_id")
@@ -218,7 +225,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			} else {
-				user.AddingToLibrary(userId, c, db, 0)
+				move.AddingToLibrary(userId, c, db, 0)
 			}
 		})
 		private.GET("/reading/add", func(c *gin.Context) {
@@ -227,7 +234,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusBadRequest)
 			} else {
-				user.AddingToLibrary(userId, c, db, 1)
+				move.AddingToLibrary(userId, c, db, 1)
 			}
 		})
 		private.GET("/alreadyRead/add", func(c *gin.Context) {
@@ -236,7 +243,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			} else {
-				user.AddingToLibrary(userId, c, db, 69)
+				move.AddingToLibrary(userId, c, db, 69)
 			}
 		})
 		private.GET("/favorite/add", func(c *gin.Context) {
@@ -245,7 +252,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			} else {
-				user.AddingToLibrary(userId, c, db, 4)
+				move.AddingToLibrary(userId, c, db, 4)
 			}
 		})
 
@@ -266,7 +273,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			} else {
-				user.AddingToLibrary(userId, c, db, 2)
+				move.AddingToLibrary(userId, c, db, 2)
 			}
 		})
 
@@ -276,7 +283,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			} else {
-				user.AddingToLibrary(userId, c, db, 3)
+				move.AddingToLibrary(userId, c, db, 3)
 			}
 		})
 	}

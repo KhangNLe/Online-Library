@@ -27,7 +27,9 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#" hx-target=".contents" hx-swap="innerHTML"
-                                hx-get="/profile" hx-trigger="click">Profile</a></li>
+                                hx-get="/profile" hx-trigger="click"
+                                hx-on::after-request=" if (event.detail.xhr.status >= 400) { document.querySelector('.contents').innerHTML = event.detail.xhr.responseText; }">Profile</a>
+                        </li>
                         <li><a class="dropdown-item" href="#" hx-get="/my-books/reading" hx-target=".contents"
                                 hx-swap="innerHTML" hx-push-url="true" hx-trigger="click" hx-on::after-Request="if (event.detail.xhr.status == 200) {
                                     document.querySelector('.navbar-brand').innerText = 'My books';
@@ -88,6 +90,12 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <script src="static/scripts.js"></script>
+    <footer>
+        <div class="githubLink">
+            <p>Please contact <a href="https://github.com/ctrl-MizteRy/Online-Library">MizteRy</a> for any question or
+                problem</p>
+        </div>
+    </footer>
 </body>
 
 </html>

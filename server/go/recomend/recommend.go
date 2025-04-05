@@ -52,11 +52,12 @@ func GetRecoommend(c *gin.Context, db *sqlx.DB, userId string) {
 	var genre string
 	amount := 0
 	for key, val := range topGenre {
-		if val > amount {
+		if val > amount && key != "Fiction" {
 			genre = key
 			amount = val
 		}
 	}
+	log.Println(genre)
 
 	var books []string
 	err = getBook(genre, &books, &book_ids)

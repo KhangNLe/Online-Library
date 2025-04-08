@@ -162,6 +162,23 @@ func loadOptions(myPage *[]string) {
                     }
                 "
             >Favorites</a></li>
+            <li class="nav-item">
+                <a class="nav-link profile" 
+                href="#" 
+                hx-get="/my-books/profile"
+                hx-target=".contents"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                hx-trigger="click"
+                hx-on::after-Request= "
+                    if (event.detail.xhr.status == 200) {
+                        document.querySelectorAll('.nav-link').forEach(elmt => {
+                            elmt.classList.remove('active');
+                        });
+                        document.querySelector('.profile').classList.add('active');
+                    }
+                "
+            >Profile</a></li>
             </ul>
             </div>
         <div class="contentRight" style="margin-left: auto;">

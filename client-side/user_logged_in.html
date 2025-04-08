@@ -27,7 +27,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#" hx-target=".contents" hx-swap="innerHTML"
-                                hx-get="/profile" hx-trigger="click"
+                                hx-get="/my-books/profile" hx-trigger="click"
                                 hx-on::after-request=" if (event.detail.xhr.status >= 400) { document.querySelector('.contents').innerHTML = event.detail.xhr.responseText; }">Profile</a>
                         </li>
                         <li><a class="dropdown-item" href="#" hx-get="/my-books/reading" hx-target=".contents"

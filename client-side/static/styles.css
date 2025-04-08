@@ -352,3 +352,13 @@ footer {
     justify-content: center;
     flex-direction: column;
 }
+
+.user-display fieldset {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.profile {
+    width: 90%;
+    max-width: 800px;
+}

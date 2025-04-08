@@ -182,7 +182,11 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 			log.Println(action)
-			mybook.MyBookPage(c, db, userId, action)
+			if action != "profile" {
+				mybook.MyBookPage(c, db, userId, action)
+			} else {
+				user.UserProfile(c, db, userId)
+			}
 		})
 
 		private.POST("/my-books/:location", func(c *gin.Context) {
@@ -197,15 +201,6 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if err == nil {
 				mybook.MyBookPage(c, db, userId, from)
 			}
-		})
-
-		private.GET("/profile", func(c *gin.Context) {
-			session := sessions.Default(c)
-			userId, ok := session.Get("user_id").(string)
-			if !ok {
-				c.AbortWithStatus(http.StatusInternalServerError)
-			}
-			user.UserProfile(c, db, userId)
 		})
 
 		private.GET("/logout", func(c *gin.Context) {

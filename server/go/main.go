@@ -196,10 +196,14 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 			if !ok {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
-			from, err := mybook.MovingBooks(c, db, dst, userId)
-			log.Println(from)
-			if err == nil {
-				mybook.MyBookPage(c, db, userId, from)
+			if dst == "profile" {
+
+			} else {
+				from, err := mybook.MovingBooks(c, db, dst, userId)
+				log.Println(from)
+				if err == nil {
+					mybook.MyBookPage(c, db, userId, from)
+				}
 			}
 		})
 

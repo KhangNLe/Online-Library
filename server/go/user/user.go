@@ -32,82 +32,81 @@ func UserProfile(c *gin.Context, db *sqlx.DB, userId string) {
 	var profile []string
 	loadUserTable(&profile)
 
-	profile = append(profile, `
-		<form id="profile-change"
-			hx-post="/change-profile"
-			hx-target=".contents"
-			hx-swap="innerHTML"
-		>
-	`)
 	if user.Fname == "" {
 		profile = append(profile, `
 			<td class="user-display">
+				<form name="change_fname"
+				hx-post="/my-books/profile"
+				hx-target=".myBookList"
+				hx-swap="innerHTML"
+				hx-on::afer-request=" if (event.detail.xhr.status >= 400) {
+					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responeText;
+				}"
+				>
 				<fieldset>
 					<label for="first-name">First Name:
-						<input id="first-name" type="text" placeholder="Enter your first name"/>
+						<input id="first-name" name="fname" type="text"
+							placeholder="Enter your first name"/>
 					</label>
-				</fieldset>
-			</td>
-			</tr>
-			<tr>
-			<td class="user-display">
 				<fieldset>
 					<label for="last-name">Last Name:
-						<input id="last-name" type="text" placeholder="Enter your last name"/>
+						<input id="last-name" name="lname" type="text"
+							placeholder="Enter your last name"/>
 					</label>
 				</fieldset>
-			</td>
-			</tr>
-			<tr>
-			<td class="user-display">
 				<fieldset>
 					<label for="email">Email:
-						<input id="email" type="text" placeholder="Enter your email"/>
+						<input id="email" type="text" name="email" 
+							placeholder="Enter your email"/>
 					</label>
 				</fieldset>
+				<button type="submit" class="btn btn-success"
+				>Change Profile</button>
+			</form>
 			</td>
 			</tr>
 	`)
 	} else {
 		profile = append(profile, fmt.Sprintf(`
 			<td class="user-display">
+				<form name="change_fname"
+				hx-post="/my-books/profile"
+				hx-target=".myBookList"
+				hx-swap="innerHTML"
+				hx-on::afer-request=" if (event.detail.xhr.status >= 400) {
+					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responeText;
+				}"
+				>
 				<fieldset>
 					<label for="first-name">First Name:
-						<input id="first-name" type="text" value="%s"/>
+						<input id="first-name" name="fname" type="text"
+							value="%s"/>
 					</label>
 				</fieldset>
-			</td>
-			</tr>
-			<tr>
-			<td class="user-display">
 				<fieldset>
 					<label for="last-name">Last Name:
-						<input id="last-name" type="text" value="%s"/>
+						<input id="last-name" name="lname" type="text"
+							value="%s"/>
 					</label>
 				</fieldset>
-			</td>
-			</tr>
-			<tr>
-			<td class="user-display">
 				<fieldset>
 					<label for="email">Email:
-						<input id="email" type="text" value="%s"/>
+						<input id="email" type="text" name="email" 
+							value="%s"/>
 					</label>
 				</fieldset>
-			</td
+				<button type="submit" class="btn btn-success"
+				>Change Profile</button>
+			</form>
+			</td>
 			</tr>
 		`, user.Fname, user.Lname, user.Email))
 	}
 
 	profile = append(profile, `
-		<tr><td>
-		<button type="submit" class="btn btn-success">
-		Submit Change
-		</button>
-		</td></tr>
-		</form>
 		</tbody>
 		</table>
+			<div class="errorMsg"></div>
 		</div>
 		</div>
 	`)

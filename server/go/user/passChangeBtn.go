@@ -1,10 +1,10 @@
-package htmxswap
+package user
 
 import (
 	"github.com/gin-gonic/gin"
 )
 
-func LoginButton(c *gin.Context) {
+func ChangePassBtn(c *gin.Context) {
 	c.Header("Content-Type", "text/html")
 	c.String(200, `
 	<form class="user-signin" 
@@ -63,4 +63,5 @@ func LoginButton(c *gin.Context) {
 	</div>
 	</form>
             `)
+
 }

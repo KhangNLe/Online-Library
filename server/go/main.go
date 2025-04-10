@@ -197,7 +197,7 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 			if dst == "profile" {
-
+				user.UpdateProfile(c, db, userId)
 			} else {
 				from, err := mybook.MovingBooks(c, db, dst, userId)
 				log.Println(from)
@@ -285,6 +285,8 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				move.AddingToLibrary(userId, c, db, 3)
 			}
 		})
+
+		private.GET("/change-pass", user.ChangePassBtn)
 	}
 
 }

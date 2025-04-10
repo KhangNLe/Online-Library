@@ -1,8 +1,9 @@
 document.addEventListener('htmx:afterSwap', function(e) {
-    if (e.detail.target.id === 'login-container') {
+    if (e.detail.target.id === 'login-container' || e.detail.target.id === 'passwordChange') {
         const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
         modal.show();
     }
+
     const loginBtn = document.getElementById("submit-login");
     if (loginBtn != null) {
         const pass = document.getElementById("user-password");

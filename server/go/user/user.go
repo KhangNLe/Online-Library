@@ -37,32 +37,42 @@ func UserProfile(c *gin.Context, db *sqlx.DB, userId string) {
 			<td class="user-display">
 				<form name="change_fname"
 				hx-post="/my-books/profile"
-				hx-target=".myBookList"
+				hx-target=".contents"
 				hx-swap="innerHTML"
-				hx-on::afer-request=" if (event.detail.xhr.status >= 400) {
-					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responeText;
+				hx-on::after-request=" if (event.detail.xhr.status >= 400) {
+					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responseText;
+				} else if (event.detail.xhr.status == 200){
+					alert('Profile added successfully');
 				}"
 				>
 				<fieldset>
 					<label for="first-name">First Name:
 						<input id="first-name" name="fname" type="text"
-							placeholder="Enter your first name"/>
+							placeholder="Enter your first name"
+							autocomplete="off"/>
 					</label>
 				<fieldset>
 					<label for="last-name">Last Name:
 						<input id="last-name" name="lname" type="text"
-							placeholder="Enter your last name"/>
+							placeholder="Enter your last name"
+							autocomplete="off"/>
 					</label>
 				</fieldset>
 				<fieldset>
 					<label for="email">Email:
 						<input id="email" type="text" name="email" 
-							placeholder="Enter your email"/>
+							placeholder="Enter your email"
+							autocomplete="off"/>
 					</label>
 				</fieldset>
 				<button type="submit" class="btn btn-success"
 				>Change Profile</button>
-			</form>
+				</form>
+				<button type="button" class="btn btn-success"
+					hx-get="/change-pass"
+					hx-target="#passwordChange"
+					hx-swap="innerHTML"
+				>Change Password</button>
 			</td>
 			</tr>
 	`)
@@ -70,34 +80,42 @@ func UserProfile(c *gin.Context, db *sqlx.DB, userId string) {
 		profile = append(profile, fmt.Sprintf(`
 			<td class="user-display">
 				<form name="change_fname"
-				hx-post="/my-books/profile"
-				hx-target=".myBookList"
+				hx-target=".contents"
 				hx-swap="innerHTML"
-				hx-on::afer-request=" if (event.detail.xhr.status >= 400) {
-					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responeText;
+				hx-post="/my-books/profile"
+				hx-on::after-request=" if (event.detail.xhr.status >= 400) {
+					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responseText;
+				} else if (event.detail.xhr.status === 200){
+					alert('Change Request successed');
+					console.log('batman');
 				}"
 				>
 				<fieldset>
 					<label for="first-name">First Name:
 						<input id="first-name" name="fname" type="text"
-							value="%s"/>
+							value="%s" autocomplete="off"/>
 					</label>
 				</fieldset>
 				<fieldset>
 					<label for="last-name">Last Name:
 						<input id="last-name" name="lname" type="text"
-							value="%s"/>
+							value="%s" autocomplete="off"/>
 					</label>
 				</fieldset>
 				<fieldset>
 					<label for="email">Email:
 						<input id="email" type="text" name="email" 
-							value="%s"/>
+							value="%s" autocomplete="off"/>
 					</label>
 				</fieldset>
 				<button type="submit" class="btn btn-success"
 				>Change Profile</button>
-			</form>
+				</form>
+				<button type="button" class="btn btn-success"
+					hx-get="/change-pass"
+					hx-target="#passwordChange"
+					hx-swap="innerHTML"
+			>Change Password</button>
 			</td>
 			</tr>
 		`, user.Fname, user.Lname, user.Email))

@@ -25,6 +25,8 @@ document.addEventListener('htmx:afterSwap', function(e) {
         const reenterRegex = document.getElementById("reenter-regex");
         const userName = document.getElementById("signup-userid");
         const userRegx = document.getElementById("userid-regex");
+        const currPass = document.getElementById("currPass");
+        const currPassToggle = document.getElementById("currPass-enter");
 
         passToggle.addEventListener("click", (e) => {
             e.preventDefault();
@@ -34,10 +36,14 @@ document.addEventListener('htmx:afterSwap', function(e) {
             e.preventDefault();
             passwordVisibility(reenter, reenterToggle);
         })
+        currPassToggle.addEventListener("click", (e) =>{
+            e.preventDefault();
+            passwordVisibility(currPass, currPassToggle);
+        });
 
         userName.addEventListener("keyup", () => {
             regexChecking(userName, userRegx, 6);
-        })
+        });
 
         password.addEventListener("keyup", () => {
             regexChecking(password, passregex, 10);
@@ -45,8 +51,9 @@ document.addEventListener('htmx:afterSwap', function(e) {
 
         reenter.addEventListener("keyup", () => {
             regexChecking(reenter, reenterRegex, 10);
-
-            if (password.value != reenter.value) {
+            if (reenter.value == ""){
+                errorMsg.style.display = "none";
+            } else if (password.value != reenter.value) {
                 errorMsg.style.display = "block";
             } else {
                 errorMsg.style.display = "none";
@@ -82,7 +89,7 @@ document.addEventListener('htmx:afterSwap', function(e) {
 
 /**
  * @param {Element} text_box
- * @param {Element} visible_img 
+ * @param {Element} visible_img
  **/
 function passwordVisibility(text_box, visible_img) {
     let type = (text_box.getAttribute("type") === "password") ? "text" : "password";
@@ -97,7 +104,7 @@ function passwordVisibility(text_box, visible_img) {
 
 /**
  * @param {Element} text_box
- * @param {Element} warning 
+ * @param {Element} warning
  **/
 function regexChecking(text_box, warning, length) {
     let regx = createRegex(length);

@@ -36,8 +36,8 @@ func SignUpBtn(c *gin.Context) {
                         width="5%" height="5%" style="display:inlinel margin-left: -1.5%; vertical-align: middle"
                         id="signup-reenter">
                     <br>
-        <p id="reenter-regex" style="color: red; display: none; font-size: 14px;">
-                        Password need to be at least 10 character long with at least 1 number and a special character(!@#$%^/_)
+					<p id="reenter-regex" style="color: red; display: none; font-size: 14px;">
+									Password need to be at least 10 character long with at least 1 number and a special character(!@#$%^/_)
                     </p>
         <p id="mismatch-pass" style="color:red; display: none; font-size: 14px;">Password does not match!</p><br>
         <div id="warning-msg">

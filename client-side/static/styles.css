@@ -362,3 +362,10 @@ footer {
     width: 90%;
     max-width: 800px;
 }
+
+.profileBtns{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    max-width: 175px;
+}

@@ -111,11 +111,14 @@ func UserProfile(c *gin.Context, db *sqlx.DB, userId string) {
 				<button type="submit" class="btn btn-success"
 				>Change Profile</button>
 				</form>
-				<button type="button" class="btn btn-success"
-					hx-get="/change-pass"
-					hx-target="#passwordChange"
-					hx-swap="innerHTML"
-			>Change Password</button>
+				<div class="profileBtns">
+					<button type="button" class="btn btn-success"
+						hx-get="/change-pass"
+						hx-target="#passwordChange"
+						hx-swap="innerHTML"
+						hx-trigger="click"
+					>Change Password</button>
+				</div>
 			</td>
 			</tr>
 		`, user.Fname, user.Lname, user.Email))

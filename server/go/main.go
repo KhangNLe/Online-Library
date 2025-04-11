@@ -287,6 +287,15 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 		})
 
 		private.GET("/change-pass", user.ChangePassBtn)
+		private.POST("/change-pass", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				c.AbortWithStatus(http.StatusInternalServerError)
+				return
+			}
+			user.ChangePass(c, db, userId)
+		})
 	}
 
 }

@@ -12,14 +12,14 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func ChangePass(c *gin.Context, db *sqlx.DB, user string) {
+func ChangePass(c *gin.Context, db *sqlx.DB, user string) error {
 	userId, err := strconv.Atoi(user)
 	if err != nil {
+		log.Printf("Could not convert %s into integer. Error: %s", user, err)
 		mybook.ErrorRespone(c, `
 			Could not change your password at the moment. Please contact the dev for the problem.
 			`, http.StatusInternalServerError)
-		log.Printf("Could not convert %s into integer. Error: %s", user, err)
-		return
+		return err
 	}
 
 	pass := c.PostForm("currPass")
@@ -27,26 +27,28 @@ func ChangePass(c *gin.Context, db *sqlx.DB, user string) {
 
 	hashPass, err := getHashPass(db, userId)
 	if err != nil {
+		log.Printf("Could not get pass_hash. Error: %s", err)
 		mybook.ErrorRespone(c, `
 			Could not change your password at the moment. Please contact the dev for the problem.
 			`, http.StatusInternalServerError)
-		return
+		return err
 	}
 
-	if password.ComparePass(hashPass, pass) {
+	if !password.ComparePass(hashPass, pass) {
+		log.Printf("Incorrect pass_hash")
 		mybook.ErrorRespone(c, `
-			Incorrect current password.
+			The password you entered for curernt password is incorrect.
 			`, http.StatusBadRequest)
-		return
+		return err
 	}
 
 	pass, err = password.HashPass(newPass)
 	if err != nil {
+		log.Printf("Could not generate the new password. Error: %s", err)
 		mybook.ErrorRespone(c, `
 			We could not change your password at the moment. Please contact the dev for the problem.
 			`, http.StatusInternalServerError)
-		log.Printf("Could not generate the new password. Error: %s", err)
-		return
+		return err
 	}
 
 	err = updatePassword(db, pass, userId)
@@ -54,11 +56,9 @@ func ChangePass(c *gin.Context, db *sqlx.DB, user string) {
 		mybook.ErrorRespone(c, `
 			We could not change your password at the moment. Please contact the dev for this problem.
 			`, http.StatusInternalServerError)
-		return
+		return err
 	}
-
-	c.Header("HX-Redirect", "/")
-	c.Status(http.StatusOK)
+	return nil
 }
 
 func getHashPass(db *sqlx.DB, userId int) (string, error) {
@@ -96,7 +96,7 @@ func updatePassword(db *sqlx.DB, newPass string, userId int) error {
 		}
 	}()
 
-	_, err = tx.Exec(`UPDATE User SET hash_pass = ? 
+	_, err = tx.Exec(`UPDATE User SET pass_hash = ? 
 		WHERE user_id = ?`, newPass, userId)
 	if err != nil {
 		log.Printf("Could not update new password for User. Error: %s", err)

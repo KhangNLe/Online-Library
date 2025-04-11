@@ -294,7 +294,11 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.AbortWithStatus(http.StatusInternalServerError)
 				return
 			}
-			user.ChangePass(c, db, userId)
+			err := user.ChangePass(c, db, userId)
+			if err == nil {
+				c.Header("HX-Redirect", "/")
+				c.Status(http.StatusOK)
+			}
 		})
 	}
 

@@ -11,7 +11,7 @@ func ChangePassBtn(c *gin.Context) {
 			hx-post="/change-pass" 
 			hx-on::after-request=" 
 				if (event.detail.xhr.status >= 400) { 
-					document.getElementById('errorWarning').innerHTML = event.detail.xhr.responseText; 
+					document.getElementById('warning-msg').innerHTML = event.detail.xhr.responseText; 
 					}
 			"> 
 	<div class="modal fade" id="staticBackdrop"
@@ -37,7 +37,7 @@ func ChangePassBtn(c *gin.Context) {
                         id="currPass-enter"><br>
                     <label for="signup-password">New Password:</label><br>
                     <input type="password" id="signup-password" name="newPass" required
-                            placeholder="Enter your password">
+                            placeholder="Enter the new password">
                      <img src="https://media.geeksforgeeks.org/wp-content/uploads/20210917145551/eye.png" 
                         width="5%" height="5%" style="display:inlinel margin-left: -1.5%; vertical-align: middle"
                         id="signup-enter">
@@ -47,7 +47,7 @@ func ChangePassBtn(c *gin.Context) {
                     </p>
                     <label for="password-reenter">Re-enter your password:</label><br>
                     <input type="password" id="password-reenter" required
-                            placeholder="Reenter your password">
+                            placeholder="Reenter the new password">
                      <img src="https://media.geeksforgeeks.org/wp-content/uploads/20210917145551/eye.png" 
                         width="5%" height="5%" style="display:inlinel margin-left: -1.5%; vertical-align: middle"
                         id="signup-reenter">
@@ -61,7 +61,7 @@ func ChangePassBtn(c *gin.Context) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" id="submit-signup" class="btn btn-primary">Register</button>
+            <button type="submit" id="submit-passChange" class="btn btn-primary">Register</button>
           </div>
         </form>
 		</div>

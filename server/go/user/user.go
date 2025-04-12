@@ -34,94 +34,85 @@ func UserProfile(c *gin.Context, db *sqlx.DB, userId string) {
 
 	if user.Fname == "" {
 		profile = append(profile, `
+			<tr>
 			<td class="user-display">
-				<form name="change_fname"
-				hx-post="/my-books/profile"
-				hx-target=".contents"
-				hx-swap="innerHTML"
-				hx-on::after-request=" if (event.detail.xhr.status >= 400) {
-					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responseText;
-				} else if (event.detail.xhr.status == 200){
-					alert('Profile added successfully');
-				}"
-				>
-				<fieldset>
-					<label for="first-name">First Name:
-						<input id="first-name" name="fname" type="text"
-							placeholder="Enter your first name"
-							autocomplete="off"/>
-					</label>
-				<fieldset>
-					<label for="last-name">Last Name:
-						<input id="last-name" name="lname" type="text"
-							placeholder="Enter your last name"
-							autocomplete="off"/>
-					</label>
-				</fieldset>
-				<fieldset>
-					<label for="email">Email:
-						<input id="email" type="text" name="email" 
-							placeholder="Enter your email"
-							autocomplete="off"/>
-					</label>
-				</fieldset>
-				<button type="submit" class="btn btn-success"
-				>Change Profile</button>
-				</form>
+				<p id="profileChange">First Name:</p>
+			</td>
+			</tr>
+			<tr>
+			<td>
+				<p id="profileChange">Last Name:</p>
+			</td>
+			</tr>
+			<tr>
+			<td>
+				<p id="profileChange">Email:</p>
+			</td>
+			</tr>
+			<tr>
+			<td>
+				<button 
+					hx-get="/edit-profile"
+					hx-target="#passwordChange"
+					hx-swap="innerHTML"
+					hx-trigger="click"
+					type="button" class="btn btn-success"
+					hx-vals='{
+						"fname": "",
+						"lname": "",
+						"email": ""
+					}'
+				>Edit Profile</button>
 				<button type="button" class="btn btn-success"
 					hx-get="/change-pass"
 					hx-target="#passwordChange"
 					hx-swap="innerHTML"
+					hx-trigger="click"
 				>Change Password</button>
 			</td>
 			</tr>
 	`)
 	} else {
 		profile = append(profile, fmt.Sprintf(`
+			<tr>
 			<td class="user-display">
-				<form name="change_fname"
-				hx-target=".contents"
-				hx-swap="innerHTML"
-				hx-post="/my-books/profile"
-				hx-on::after-request=" if (event.detail.xhr.status >= 400) {
-					document.querySelector('.errorMsg').innerHTML = event.detail.xhr.responseText;
-				} else if (event.detail.xhr.status === 200){
-					alert('Change Request successed');
-					console.log('batman');
-				}"
-				>
-				<fieldset>
-					<label for="first-name">First Name:
-						<input id="first-name" name="fname" type="text"
-							value="%s" autocomplete="off"/>
-					</label>
-				</fieldset>
-				<fieldset>
-					<label for="last-name">Last Name:
-						<input id="last-name" name="lname" type="text"
-							value="%s" autocomplete="off"/>
-					</label>
-				</fieldset>
-				<fieldset>
-					<label for="email">Email:
-						<input id="email" type="text" name="email" 
-							value="%s" autocomplete="off"/>
-					</label>
-				</fieldset>
-				<button type="submit" class="btn btn-success"
-				>Change Profile</button>
-				</form>
-				<div class="profileBtns">
-					<button type="button" class="btn btn-success"
-						hx-get="/change-pass"
-						hx-target="#passwordChange"
-						hx-swap="innerHTML"
-						hx-trigger="click"
-					>Change Password</button>
-				</div>
+				<p id="profileDisplay">First Name: %s</p>
 			</td>
 			</tr>
-		`, user.Fname, user.Lname, user.Email))
+			<tr>
+			<td class="user-display">
+				<p id="profileDisplay">Last Name: %s</p>
+			</td>
+			</tr>
+			<tr>
+			<td class="user-display">
+				<p id="profileDisplay">Email: %s</p>
+			</td>
+			</tr>
+			<tr>
+			<td>
+				<button 
+					hx-get="/edit-profile"
+					hx-target="#passwordChange"
+					hx-swap="innerHTML"
+					hx-trigger="click"
+					type="button" class="btn btn-success"
+					hx-vals='{
+						"fname": "%s",
+						"lname": "%s",
+						"email": "%s"
+					}'
+				>Edit Profile</button>
+				<button type="button" class="btn btn-success"
+					hx-get="/change-pass"
+					hx-target="#passwordChange"
+					hx-swap="innerHTML"
+					hx-trigger="click"
+				>Change Password</button>
+			</td>
+			</tr>
+		`, user.Fname, user.Lname, user.Email,
+			user.Fname, user.Lname, user.Email))
 	}
 
 	profile = append(profile, `

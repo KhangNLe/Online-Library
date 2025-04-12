@@ -15,7 +15,8 @@ func UpdateProfile(c *gin.Context, db *sqlx.DB, user string) {
 	userId, err := strconv.Atoi(user)
 	if err != nil {
 		mybook.ErrorRespone(c, `
-
+			We could not make this change at the this moment.
+			Please contact the dev for the problem.
 			`, http.StatusInternalServerError)
 		log.Printf("User: %s cannot change it into int. Error: %s", err, err)
 		return
@@ -28,8 +29,10 @@ func UpdateProfile(c *gin.Context, db *sqlx.DB, user string) {
 	tx, err := db.Beginx()
 	if err != nil {
 		mybook.ErrorRespone(c, `
-
+			We could not make this change at the this moment.
+			Please contact the dev for the problem.
 			`, http.StatusInternalServerError)
+		return
 	}
 	defer func() {
 		if err != nil {
@@ -39,14 +42,20 @@ func UpdateProfile(c *gin.Context, db *sqlx.DB, user string) {
 
 	ok := checkProperEmail(email)
 	if !ok {
-		mybook.ErrorRespone(c, ``, http.StatusBadRequest)
 		log.Printf("Inproper email address of %s", email)
+		mybook.ErrorRespone(c, `
+			Incorrect email format, please try again.
+			`, http.StatusBadRequest)
 		return
 	}
 
 	userExist, err := checkForExistingUser(tx, userId)
 	if err != nil {
-		mybook.ErrorRespone(c, ``, http.StatusInternalServerError)
+		log.Printf("Could not find existed user. Error: %s", err)
+		mybook.ErrorRespone(c, `
+			We could not make this change at the this moment.
+			Please contact the dev for the problem.
+			`, http.StatusInternalServerError)
 		return
 	}
 
@@ -56,17 +65,21 @@ func UpdateProfile(c *gin.Context, db *sqlx.DB, user string) {
 		err = updateProfile(tx, fname, lname, email, userId)
 	}
 	if err != nil {
-		mybook.ErrorRespone(c, `
-
-				`, http.StatusInternalServerError)
 		log.Printf("Could not update profile. Error: %s", err)
+		mybook.ErrorRespone(c, `
+			We could not make this change at the this moment.
+			Please contact the dev for the problem.
+				`, http.StatusInternalServerError)
 		return
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		mybook.ErrorRespone(c, ``, http.StatusInternalServerError)
 		log.Printf("Could not commit into db. Error: %s", err)
+		mybook.ErrorRespone(c, `
+			We could not make this change at the this moment.
+			Please contact the dev for the problem.
+			`, http.StatusInternalServerError)
 		return
 	}
 

@@ -61,7 +61,7 @@ func ChangePassBtn(c *gin.Context) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" id="submit-passChange" class="btn btn-primary">Register</button>
+            <button type="submit" id="submit-passChange" class="btn btn-primary">Submit Change</button>
           </div>
         </form>
 		</div>
@@ -69,5 +69,4 @@ func ChangePassBtn(c *gin.Context) {
 	</div>
 	</form>
             `)
-
 }

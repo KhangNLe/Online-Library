@@ -300,6 +300,18 @@ func privateRouter(r *gin.Engine, db *sqlx.DB) {
 				c.Status(http.StatusOK)
 			}
 		})
+
+		private.GET("/edit-profile", user.EditProfileBtn)
+		private.POST("/edit-profile", func(c *gin.Context) {
+			session := sessions.Default(c)
+			userId, ok := session.Get("user_id").(string)
+			if !ok {
+				log.Printf("Could not get user_id from session")
+				c.AbortWithStatus(http.StatusInternalServerError)
+				return
+			}
+			user.UpdateProfile(c, db, userId)
+		})
 	}
 
 }

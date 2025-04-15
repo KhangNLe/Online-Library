@@ -79,10 +79,20 @@
             </div>
         </nav>
         <div class="contents">
-            <div class="spinner-border text-secondary" role="status"
-                style="align-self: center; margin-left: 50%; margin-top: 15%;">
-                <span class="visually-hidden">Under construction...</span>
-                <h3>Under Construction</h3>
+            <div class="container mt-5 text-center">
+                <h1 class="display-4">Welcome to My Library 📚</h1>
+                <p class="lead mt-3">Discover, organize, and track your reading journey all in one place.</p>
+                <button class="btn btn-primary btn-lg mt-3 startExplore"
+                    hx-get="/search" hx-target=".contents"
+                    hx-swap="innerHTML" hx-push-url="true"
+                    hx-on::after-request="console.log('Testing testing');"
+                    >Start Exploring
+                </button>
+            </div>
+            <div class="container mt-5 text-center text-muted">
+                <blockquote class="blockquote">
+                    <p>"A reader lives a thousand lives before he dies. The man who never reads lives only one." – George R.R. Martin</p>
+                </blockquote>
             </div>
         </div>
     </main>

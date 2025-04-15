@@ -42,6 +42,7 @@ func AboutPage(c *gin.Context) {
 			<ul>
 				<li>User reviews & notes for books</li>
 				<li>Custom reading challenges</li>
+				<li><The ability to track where you are in the book/li>
 				<li>Social features to share and follow other libraries</li>
 			</ul>
 

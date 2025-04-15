@@ -123,6 +123,13 @@ document.addEventListener('htmx:afterSwap', function(e) {
         });
     }
 
+    const startBtn = document.querySelector('.startExplore');
+    if (startBtn != null){
+        startBtn.addEventListener('click', function() {
+            document.querySelector('.navbar-brand').innerText = 'Search';
+        });
+    }
+
 });
 
 /**

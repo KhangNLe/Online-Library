@@ -18,7 +18,7 @@ func UserLogIn(c *gin.Context, db *sqlx.DB) (string, error) {
 	user.UserName = c.PostForm("userid")
 	user.Password = c.PostForm("password")
 
-	resp, err := db.Query("SELECT * FROM USER WHERE user_name=?", user.UserName)
+	resp, err := db.Query("SELECT * FROM User WHERE user_name=?", user.UserName)
 	if err != nil {
 		c.Header("Content-Type", "text/html")
 		c.String(http.StatusInternalServerError, `
@@ -40,7 +40,7 @@ func UserLogIn(c *gin.Context, db *sqlx.DB) (string, error) {
 	}
 	resp.Close()
 
-	resp, err = db.Query("SELECT pass_hash FROM USER WHERE user_name=?", user.UserName)
+	resp, err = db.Query("SELECT pass_hash FROM User WHERE user_name=?", user.UserName)
 	if err != nil {
 		c.Header("Content-Type", "text/html")
 		c.String(http.StatusInternalServerError, `

@@ -3,7 +3,7 @@ package main
 import (
 	"book/author"
 	"book/htmxSwap"
-	"book/login-signup"
+	"book/loginsignup"
 	"book/move"
 	"book/mybook"
 	"book/recomend"
@@ -22,21 +22,27 @@ import (
 )
 
 const (
-	projectPath = "Desktop/Projects/HTML/OnlineLibrary"
-	clientPath  = "client-side"
+	//projectPath = "Desktop/Projects/HTML/OnlineLibrary"
+	projectPath = "/app"
+	clientPath  = "clientSide"
 	serverPath  = "server"
 	dbName      = "library.db?_journal_mode=WAL&_sync=NORMAL&_busy_timeout=500"
 )
 
 func main() {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatalf("Could not open local home directory. Error: %s", err)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "6969"
 	}
+	/*
+		home, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatalf("Could not open local home directory. Error: %s", err)
+		}*/
 
-	frontFile := filepath.Join(home, projectPath, clientPath)
+	frontFile := filepath.Join(projectPath, clientPath)
 	htmlFile := filepath.Join(frontFile, "*.html")
-	dbFile := filepath.Join(home, projectPath, serverPath, dbName)
+	dbFile := filepath.Join(projectPath, dbName)
 
 	db, err := connectDB(dbFile)
 	if err != nil {
@@ -46,7 +52,7 @@ func main() {
 
 	r := setupRouter(frontFile, htmlFile, db)
 	gin.SetMode(gin.DebugMode)
-	r.Run("localhost:6969")
+	r.Run(":" + port)
 }
 
 func connectDB(dbPath string) (*sqlx.DB, error) {
@@ -59,9 +65,9 @@ func connectDB(dbPath string) (*sqlx.DB, error) {
 
 func setupRouter(frontFile, htmlFile string, db *sqlx.DB) *gin.Engine {
 	r := gin.Default()
-	store, err := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret-key"))
+	store, err := redis.NewStore(10, "tcp", "redis:6379", "", []byte("secret-key"))
 	if err != nil {
-		log.Printf("Could not connect to redis. Error: %s", err)
+		log.Fatalf("Could not connect to redis. Error: %s", err)
 	}
 	r.Use(sessions.Sessions("mysesh", store))
 

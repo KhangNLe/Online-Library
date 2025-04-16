@@ -1,7 +1,7 @@
 package user
 
 import (
-	password "book/login-signup"
+	password "book/loginsignup"
 	"book/mybook"
 	"errors"
 	"log"

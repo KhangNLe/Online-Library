@@ -66,7 +66,7 @@ docker-compose up --build
 ```
 
 The app will be available at:
-👉 **[http://localhost:8080](http://localhost:8080)**
+👉 **[http://localhost:8080](http://localhost:6969)**
 
 ---
 

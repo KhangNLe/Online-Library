@@ -50,7 +50,7 @@ func AboutPage(c *gin.Context) {
 			<p>
 				This project is open source and under active development. If you’d like to contribute, suggest features, or report bugs, please visit the GitHub repository:
 				<br>
-				<a href="https://github.com/ctrl-MizteRy/Online-Library" target="_blank">https://github.com/ctrl-MizteRy/Online-Library</a>
+				<a href="https://github.com/KhangNLe/Online-Library" target="_blank">https://github.com/KhangNLe/Online-Library</a>
 			</p>
 
 			<h5 class="mt-4">Thanks for stopping by, and happy reading! 📖</h5>
